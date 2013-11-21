@@ -8,5 +8,5 @@
 *.unityproj
 *.sln
 
-# Mac only
+# MAC OSX files only
 .DS_Store
