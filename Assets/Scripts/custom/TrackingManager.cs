@@ -2,6 +2,7 @@
 using System.Collections;
 using System;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 public class TrackingManager : MonoBehaviour {
 //Lets make our calls from the Plugin	
@@ -33,6 +34,9 @@ public class TrackingManager : MonoBehaviour {
 	
 	private IntPtr wandTracker;
 	private float[] wandTrackingData;
+	public float latency = 0.0F;
+	List<Vector3> wandModPos = new List<Vector3>();
+	List<Vector3> wandModRot = new List<Vector3>();
 	
 	private IntPtr joystickTracker;
 	private float[] joystickTrackerData;
@@ -84,6 +88,11 @@ public class TrackingManager : MonoBehaviour {
 			debugger.setText ("Connecting to joystick failed");
 		}
 	}
+
+	void OnGUI() {
+		GUI.Label(new Rect(10, 10, 100, 50), "Latency " + latency.ToString("0"));
+		latency = GUI.HorizontalSlider(new Rect(25, 25, 100, 30), latency, 0.0F, 500.0F);
+	}
 	
 	void Update () {
 		if (removeMouseLook && gameObject.GetComponent("MouseLook")) 
@@ -108,10 +117,23 @@ public class TrackingManager : MonoBehaviour {
 			wandTrackingData = RetrieveFloats(wandTracker);
 			
 			//wand.transform.position = new Vector3(cave.transform.position.x + caveCenterOffset.x + wandTrackingData[0]*trackerScalingFactor, cave.transform.position.y + caveCenterOffset.y + wandTrackingData[2]*trackerScalingFactor, cave.transform.position.z + caveCenterOffset.z + wandTrackingData[1]*trackerScalingFactor);
+
+//			wand.transform.localPosition = new Vector3(caveCenterOffset.x + wandTrackingData[0]*trackerScalingFactor, caveCenterOffset.y + wandTrackingData[2]*trackerScalingFactor, caveCenterOffset.z + wandTrackingData[1]*trackerScalingFactor);
+//			wand.transform.eulerAngles = new Vector3(-wandTrackingData[4], -wandTrackingData[3], -wandTrackingData[5]);
+
+			if (wandModPos.Count > 20) {
+				wand.transform.localPosition = wandModPos[0];
+				wandModPos.RemoveAt(0);
+				wandModPos.Add(new Vector3(caveCenterOffset.x + wandTrackingData[0]*trackerScalingFactor, caveCenterOffset.y + wandTrackingData[2]*trackerScalingFactor, caveCenterOffset.z + wandTrackingData[1]*trackerScalingFactor));
 			
-			wand.transform.localPosition = new Vector3(caveCenterOffset.x + wandTrackingData[0]*trackerScalingFactor, caveCenterOffset.y + wandTrackingData[2]*trackerScalingFactor, caveCenterOffset.z + wandTrackingData[1]*trackerScalingFactor);
-			wand.transform.eulerAngles = new Vector3(-wandTrackingData[4], -wandTrackingData[3], -wandTrackingData[5]);
-			
+				wand.transform.eulerAngles = wandModRot[0];
+				wandModRot.RemoveAt(0);
+				wandModRot.Add(new Vector3(-wandTrackingData[4], -wandTrackingData[3], -wandTrackingData[5]));
+			}
+			else {
+				wandModPos.Add(new Vector3(caveCenterOffset.x + wandTrackingData[0]*trackerScalingFactor, caveCenterOffset.y + wandTrackingData[2]*trackerScalingFactor, caveCenterOffset.z + wandTrackingData[1]*trackerScalingFactor));
+				wandModRot.Add(new Vector3(-wandTrackingData[4], -wandTrackingData[3], -wandTrackingData[5]));
+			}
 			
 			Debug.Log("resulting wand position: ");
 			Debug.Log(wand.transform.position);

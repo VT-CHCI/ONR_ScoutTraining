@@ -8,8 +8,18 @@
 #pragma strict
 @script ExecuteInEditMode()
  
+private var defaultObject : GameObject;
+
 public var projectionScreen : GameObject;
 public var estimateViewFrustum : boolean = true;
+
+function Start() {
+   defaultObject = GameObject.Find("Wall."+gameObject.name.Split('.'[0])[1]);
+
+   if (projectionScreen == null) {
+      projectionScreen = defaultObject;
+   }
+}
  
 function LateUpdate() {
    if (null != projectionScreen) {
@@ -145,16 +155,14 @@ function LateUpdate() {
          // to make frustum tall enough
          if (camera.aspect >= 1.0) { 
             camera.fieldOfView = Mathf.Rad2Deg * 
-               Mathf.Atan(((pb-pa).magnitude + (pc-pa).magnitude) 
-               / va.magnitude);
+               Mathf.Atan(((pb-pa).magnitude + (pc-pa).magnitude) / va.magnitude);
          }
          else {
              // take the camera aspect into account to 
              // make the frustum wide enough 
              camera.fieldOfView = 
-                Mathf.Rad2Deg / camera.aspect *
-                Mathf.Atan(((pb-pa).magnitude + (pc-pa).magnitude) 
-                / va.magnitude);
+               Mathf.Rad2Deg / camera.aspect *
+               Mathf.Atan(((pb-pa).magnitude + (pc-pa).magnitude) / va.magnitude);
          }      
       }
    }
