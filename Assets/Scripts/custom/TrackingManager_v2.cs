@@ -6,7 +6,7 @@ using System.Runtime.InteropServices;
 
 public class TrackingManager_v2 : MonoBehaviour {
 
-	private Debugger debugger;
+	private Logger logger;
 	private GameObject cave;
 
 	public float latency = 0.0F;
@@ -25,6 +25,8 @@ public class TrackingManager_v2 : MonoBehaviour {
 	// Use this for initialization
 	void Start () {
 		cave = GameObject.Find("CAVE Mono");
+		logger = (Logger) gameObject.GetComponent("Logger");
+		logger.setText("Attempting to load trackers");
 	}
 
 	void OnGUI() {
