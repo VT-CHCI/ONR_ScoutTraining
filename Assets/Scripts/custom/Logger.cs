@@ -1,7 +1,7 @@
 ﻿using UnityEngine;
 using System.Collections;
 
-public class Log : MonoBehaviour {
+public class Logger : MonoBehaviour {
 
 	private Rect windowSize = new Rect(Screen.width - 220, 10, 200, 130);
 	private Rect scrollRect = new Rect(0, 0, 0, 3000);
@@ -10,7 +10,7 @@ public class Log : MonoBehaviour {
 	private bool show = true;
 	private Vector2 scrollPosition = Vector2.zero;
 	
-	public string text = "";
+	private string text = "";
 	
 	// Update is called once per frame
 	void Update () {
@@ -27,9 +27,9 @@ public class Log : MonoBehaviour {
 		}
 	}
 
-	void setText(string newString) {
-		text = newText + "\n" + text;
-		Debug.Log(newText);
+	public void setText(string newString) {
+		text = newString + "\n" + text;
+		Debug.Log(newString);
 	}
 
 }
