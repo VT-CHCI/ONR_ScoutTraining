@@ -4,12 +4,12 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-public class CompoundControls : MonoBehaviour {     
-	private static float f;
-	private static string s;
-	private static string sliderString = "0";
+public class CompoundControls {     
+	private float f;
+	private string s;
+	private string sliderString = "0";
 
-	public static float LabelSlider (Rect screenRect, float sliderValue, float sliderMaxValue, string labelText) {
+	public float LabelSlider (Rect screenRect, float sliderValue, float sliderMaxValue, string labelText) {
 		GUI.Label (screenRect, labelText + ": " + sliderValue.ToString("0") + "ms");
 
 		// <- Moves the Slider under the label
@@ -49,6 +49,9 @@ public class TrackingManager_v2 : MonoBehaviour {
 	private GameObject cave;
 
 	private Vector3 latency;
+	private CompoundControls headSlider;
+	private CompoundControls handSlider;
+	private CompoundControls ARSlider;
 
 	public GameObject head;
 	public GameObject wand;
@@ -67,6 +70,12 @@ public class TrackingManager_v2 : MonoBehaviour {
 
 		logger = (Logger) gameObject.GetComponent("Logger");
 		logger.setText("Attempting to load trackers");
+
+		Debug.Log(DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
+
+		headSlider = new CompoundControls();
+		handSlider = new CompoundControls();
+		ARSlider = new CompoundControls();
 	}
 
 	void OnGUI() {
@@ -80,15 +89,15 @@ public class TrackingManager_v2 : MonoBehaviour {
 
 	//Creates latency sliders
 	Vector3 latencySlider (Rect screenRect, Vector3 latency) {
-		latency.x = CompoundControls.LabelSlider (screenRect, latency.x, 2000.0f, "Head Latency");
+		latency.x = headSlider.LabelSlider (screenRect, latency.x, 2000.0f, "Head Latency");
 		
 		// <- Move the next control down a bit to avoid overlapping
 		screenRect.y += 50; 
-		latency.y = CompoundControls.LabelSlider (screenRect, latency.y, 2000.0f, "Hand Latency");
+		latency.y = handSlider.LabelSlider (screenRect, latency.y, 2000.0f, "MagicLens Cam Latency");
 		
 		// <- Move the next control down a bit to avoid overlapping
 		screenRect.y += 50; 
-		latency.z = CompoundControls.LabelSlider (screenRect, latency.z, 2000.0f, "AR Latency");
+		latency.z = ARSlider.LabelSlider (screenRect, latency.z, 2000.0f, "AR Obj Latency");
 		
 		return latency;
 	} 
