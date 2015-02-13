@@ -5,8 +5,6 @@ using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
 public class TrackingManager_v2 : MonoBehaviour {
-
-	private Debugger debugger;
 	private GameObject cave;
 
 	public float latency = 0.0F;
