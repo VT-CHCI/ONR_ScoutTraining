@@ -2,8 +2,6 @@
 using System.Collections;
 
 public class Logger : MonoBehaviour {
-
-	private Rect windowSize = new Rect(Screen.width - 220, 10, 200, 130);
 	private Rect scrollRect = new Rect(0, 0, 0, 3000);
 	private Rect labelRect = new Rect(0, 0, 200, 3000); 
 	
@@ -21,7 +19,7 @@ public class Logger : MonoBehaviour {
 
 	void OnGUI () {
 		if (show) {
-			scrollPosition = GUI.BeginScrollView (windowSize, scrollPosition, scrollRect);			
+			scrollPosition = GUI.BeginScrollView (new Rect(Screen.width - 210, 10, 200, 130), scrollPosition, scrollRect);			
 			GUI.Label (labelRect, text);
 			GUI.EndScrollView ();
 		}
