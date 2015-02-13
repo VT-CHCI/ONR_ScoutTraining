@@ -8,7 +8,8 @@ public class SliderAndTextControl
 {     
 	private float f;
 	private string s;
-	private string sliderString = "0";
+	
+	public string sliderString = "0";
 
 	public float CreateControl (Rect screenRect, float sliderValue, float sliderMaxValue, string labelText) 
 	{
@@ -50,10 +51,11 @@ public class Vector3TextControl
 {     
 	private int w;
 	private float f;
-	private string x = "0";
-	private string y = "0";
-	private string z = "0";
 	private Rect screenRect2;
+
+	public string x = "0";
+	public string y = "0";
+	public string z = "0";
 
 	public Vector3 CreateControl (Rect screenRect, Vector3 values, string labelText) 
 	{
@@ -204,6 +206,9 @@ public class TrackingManager_v2 : MonoBehaviour
 		caveOffsetControls = new Vector3TextControl();
 		trackingScalingSlider = new SliderAndTextControl();
 		turnSensitivitySlider = new SliderAndTextControl();
+
+		trackingScalingFactor = 2.5f;
+		trackingScalingSlider.sliderString = "2.5";
 	}
 
 	void OnGUI() 
@@ -242,8 +247,6 @@ public class TrackingManager_v2 : MonoBehaviour
 	      
 	      getData((now - (long)latency.z), pData);
 	      trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
-
-	      Debug.Log(trackingData.head.data[0]);
 	    }
 	    catch
 	    {
