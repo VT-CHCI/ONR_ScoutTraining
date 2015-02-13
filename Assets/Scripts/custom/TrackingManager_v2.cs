@@ -10,9 +10,9 @@ public class SliderAndTextControl
 	private string s;
 	private string sliderString = "0";
 
-	public float LabelSlider (Rect screenRect, float sliderValue, float sliderMaxValue, string labelText) 
+	public float CreateControl (Rect screenRect, float sliderValue, float sliderMaxValue, string labelText) 
 	{
-		GUI.Label (screenRect, labelText + ": " + sliderValue.ToString("0") + "ms");
+		GUI.Label (screenRect, labelText + ": " + sliderValue.ToString("0.0") + "ms");
 
 		// <- Moves the Slider under the label
 		screenRect.y += screenRect.height;
@@ -21,7 +21,7 @@ public class SliderAndTextControl
 		if (f != sliderValue) 
 		{
 			sliderValue = f;
-			sliderString = f.ToString("0");
+			sliderString = f.ToString("0.0");
 		}
 
 		// <- Moves the Input after the slider and makes it smaller
@@ -43,6 +43,66 @@ public class SliderAndTextControl
 		}
 
 		return sliderValue;
+	}
+}
+
+public class Vector3TextControl 
+{     
+	private int w;
+	private float f;
+	private string x = "0";
+	private string y = "0";
+	private string z = "0";
+	private Rect screenRect2;
+
+	public Vector3 CreateControl (Rect screenRect, Vector3 values, string labelText) 
+	{
+		GUI.Label (screenRect, labelText);
+		screenRect2 = screenRect;
+
+		// <- Moves the text boxes under the label
+		screenRect.y += screenRect.height;
+		screenRect2.y += screenRect.height;
+		w = (int)(screenRect.width-20)/3;
+
+		screenRect.x += 5;
+		screenRect.width = 15;
+
+		screenRect2.x = screenRect.x + screenRect.width + 6;
+		screenRect2.width = w - screenRect.width - 20;
+		screenRect2.height = 20;
+
+		GUI.Label (screenRect, "x:");
+		x = GUI.TextField(screenRect2, x);
+
+		screenRect.x += w + 5;
+		screenRect2.x = screenRect.x + screenRect.width + 6;
+
+		GUI.Label (screenRect, "y:");
+		y = GUI.TextField(screenRect2, y);
+
+		screenRect.x += w + 5;
+		screenRect2.x = screenRect.x + screenRect.width + 6;
+
+		GUI.Label (screenRect, "z:");
+		z = GUI.TextField(screenRect2, z);
+
+		if (float.TryParse(x, out f)) 
+	  {
+	    values.x = f;
+	  }
+
+		if (float.TryParse(y, out f)) 
+	  {
+	    values.y = f;
+	  }
+
+		if (float.TryParse(z, out f)) 
+	  {
+	    values.z = f;
+	  }
+
+		return values;
 	}
 }
 
@@ -110,8 +170,13 @@ public class TrackingManager_v2 : MonoBehaviour
 	public GameObject ARContainer;
 
 	public Vector3 caveCenterOffset;
+	private Vector3TextControl caveOffsetControls;
+
 	public float trackingScalingFactor;
+	private SliderAndTextControl trackingScalingSlider;
+
 	public float turnSensitivity;
+	private SliderAndTextControl turnSensitivitySlider;
 
 	public bool notCave;
 
@@ -135,6 +200,10 @@ public class TrackingManager_v2 : MonoBehaviour
 		headSlider = new SliderAndTextControl();
 		handSlider = new SliderAndTextControl();
 		ARSlider = new SliderAndTextControl();
+
+		caveOffsetControls = new Vector3TextControl();
+		trackingScalingSlider = new SliderAndTextControl();
+		turnSensitivitySlider = new SliderAndTextControl();
 	}
 
 	void OnGUI() 
@@ -142,6 +211,13 @@ public class TrackingManager_v2 : MonoBehaviour
 	 	GUI.BeginGroup(new Rect(10, 10, 270, 190));
 		GUI.Box(new Rect(0, 0, 270, 190), "Latency Controls");
 		latency = latencySlider (new Rect (10,30,200,30), latency);
+		GUI.EndGroup();
+
+		GUI.BeginGroup(new Rect(10, Screen.height - 210, 270, 200));
+		GUI.Box(new Rect(0, 0, 270, 200), "CAVE Calibration");
+		caveCenterOffset = caveOffsetControls.CreateControl (new Rect (10,30,270,30), caveCenterOffset, "CAVE Origin Offset");
+		trackingScalingFactor = trackingScalingSlider.CreateControl (new Rect (10,90,200,30), trackingScalingFactor, 5.0f, "Tracker Scaling");
+		turnSensitivity = turnSensitivitySlider.CreateControl (new Rect (10,140,200,30), turnSensitivity, 10.0f, "Turn Sensitivity");
 		GUI.EndGroup();
 	}
 	
@@ -183,15 +259,15 @@ public class TrackingManager_v2 : MonoBehaviour
 	//Creates latency sliders
 	Vector3 latencySlider (Rect screenRect, Vector3 latency) 
 	{
-		latency.x = headSlider.LabelSlider (screenRect, latency.x, 2000.0f, "Head Latency");
+		latency.x = headSlider.CreateControl (screenRect, latency.x, 2000.0f, "Head Latency");
 		
 		// <- Move the next control down a bit to avoid overlapping
 		screenRect.y += 50; 
-		latency.y = handSlider.LabelSlider (screenRect, latency.y, 2000.0f, "MagicLens Cam Latency");
+		latency.y = handSlider.CreateControl (screenRect, latency.y, 2000.0f, "Cam Latency");
 		
 		// <- Move the next control down a bit to avoid overlapping
 		screenRect.y += 50; 
-		latency.z = ARSlider.LabelSlider (screenRect, latency.z, 2000.0f, "AR Obj Latency");
+		latency.z = ARSlider.CreateControl (screenRect, latency.z, 2000.0f, "AR Obj Latency");
 		
 		return latency;
 	} 
