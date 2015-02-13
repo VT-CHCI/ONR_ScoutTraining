@@ -224,12 +224,13 @@ public class TrackingManager_v2 : MonoBehaviour
 	// Update is called once per frame
 	void Update () 
 	{
+		TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
+		now = (long)t.TotalMilliseconds;
+
 		if (!notCave)
 		{
 			try
-	    {
-	    	now = (DateTime.Now.Ticks / TimeSpan.TicksPerMillisecond);
-	    	
+	    {	
 	    	getData((now - (long)latency.x), pData);
 	      trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
 	      
