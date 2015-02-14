@@ -2,54 +2,64 @@
 
 import UnityEngine.UI;
 import System.Collections.Generic;
+
 /*
-	Time variable to calculate the speed of descent for the crate
+	Time:
+	- Used to calculate speed of descent of the crate
 */
 var startTime : float;
 
 /*
-	Strings (hopefully float values) that will be grabbed from the three TextFields.
-	These will be used for the coordinates of the crate drop
+	Strings & Vector3:
+	- (x, y, z) coordinate Strings (to be converted to floats) that
+	  grabbed from TextFields
+	- Vector3 that contains the drop coordinates
 */
 var xInput : String; 
 var yInput : String;
 var zInput : String;
-var rInput : String;
 var inputC : Vector3;
 
 /*
-	Boolean values to indicate whether one, the crate will land on the beacon, two,
-	toggle the UI for coordinate and crate drop input, three,
-	if all three of the coordinate input values are floats, or four,
-	if "Drop Crate" was pressed
+	Booleans:
+	- Accurate v.s Probability-based crate drop
+	- UI coordinate-input system
+	- Whether or not user has clicked the UI button to drop the crate
+	- Whether or not the user has clicked the mouse to drop the crate
 */
 var rToggle = true;
 var fToggle = false;
-var preCheck = false;
 var buttonCheck = false;
 var clickCheck = false;
 
 /*
-	Crate and Beacon object used to one, manipulate the crate's position 
-	(using the SmoothStep and Lerp functions), and two, 
-	validate that the coordinates confirmed using the mouse are correct
+	World Objects:
+	- The crate that will be dropped
+	- The beacon that indicates where to drop the crate
+	- The LineRenderer that will show the user where their mouse is in the world
 */
 var crate : GameObject;
 var beacon : GameObject;
 var mouseR : LineRenderer;
 
 /*
-	Variable used to manage SmoothStep and Lerp functions movement speed
+	Delta Position:
+	- Manages the speed of the Lerp function that is "dropping" the crate
 */
 var delta = 0.0;
 
 /*
-	Random generator for failed crate drop inside beacon area
+	RNG:
+	- Used to calculate probability percentages
 */
 var random : Random;
 
 /*
-	The only initial setup right now is to attach the actual crate and beacon to an object
+	Finds:
+	- Crate, Beacon, and LineRenderer objects
+	- Sets the crate to be invisible until drop
+	- Records the initial time
+	- Initializes random number generator for probability curve
 */
 function Start () {
 	crate = GameObject.Find("CrateD");
@@ -63,8 +73,12 @@ function Start () {
 }
 
 /*
-	Check to see if either the toggle for accurate crate drop success is on, or
-	if the toggle for the UI coordinate-input system is on
+	Checks for:
+	- Boolean toggle for UI coordinate-input system
+	- Boolean toggle for accurate crate drop
+	- Reset the crate and allow more drops
+	- Continue to check for mouse input if user hasn't clicked yet
+	- If the proper booleans are true, start the crate drop
 */
 function Update () {
 	if(Input.GetKeyDown (KeyCode.F1)) {
@@ -76,7 +90,8 @@ function Update () {
 	}
 	
 	else if(Input.GetKeyDown (KeyCode.F3)) {
-		//Possibly add in functionality to reset crate?
+		crate.renderer.enabled = false;
+		clickCheck = false;
 	}
 	
 	else if(!clickCheck) {
@@ -93,15 +108,15 @@ function Update () {
 }
 
 /*
-	Checks to see if three float values were input; these will then be used
-	for coordinates for the crate drop once the respective button is clicked
+	UI System:
+	- Three float coordinate values (x, y, z)
+	- Button press to start the crate drop
 */
 function OnGUI() {
 	if(fToggle) {
 		xInput = GUI.TextField (Rect (Screen.width - 160, 30, 160, 30), xInput);
 		yInput = GUI.TextField (Rect (Screen.width - 160, 60, 160, 30), yInput);
 		zInput = GUI.TextField (Rect (Screen.width - 160, 90, 160, 30), zInput);
-		rInput = GUI.TextField (Rect (Screen.width - 160, Screen.height + 30, 160, 30), rInput);
 
 		if(GUI.Button (Rect (Screen.width - 160, 123, 80, 33), "Drop Crate")) { 
 			if(float.TryParse(xInput, inputC.x) && float.TryParse(yInput, inputC.y) && 
@@ -113,13 +128,15 @@ function OnGUI() {
 }
 
 /*
-	As long as the crate is found, this function will either
-	smoothly drop the crate down to its correct position on the beacon, or,
-	smoothly drop the crate down to an incorrect position outside the beacon
+	Crate Drop:
+	- Checks to make sure the crate object isn't missing
+	- Moves the crate to the proper position above the drop point
+	- Makes the crate visible and starts calculating position delta values
+	- Start "dropping" the crate
 */
 function ReleaseCrate (toggle : boolean, targetP : Vector3 , t : float) {
 	if(crate != null) {
-		crate.transform.position = Vector3(targetP.x - 30, targetP.y + 100, targetP.z);
+		crate.transform.position = Vector3(targetP.x - 30, targetP.y + 200, targetP.z);
 		crate.renderer.enabled = true;
 		delta = ((Time.time - startTime) / t);
 		
@@ -128,8 +145,12 @@ function ReleaseCrate (toggle : boolean, targetP : Vector3 , t : float) {
 }
 
 /*
-	Using the mouse, a ray will be drawn to show the user where they are pointing in the world.
-	They will use this ray to confirm the location for the crate drop.
+	Mouse Tracking:
+	- Initialize the ray extending from the MainCamera based on the mouse position
+	- Declare the hit object and intersection point vector
+	- Shoots the ray from the camera to the mouse position looking for collision hits
+	- Update the LineRenderer to follow the mouse
+	- Update the vectors to reference the intersection point and toggle the mouse click boolean
 */
 function drawMouseRay() {
 	//Personal Note: There might be no main camera, might be tagged as something else
@@ -142,19 +163,20 @@ function drawMouseRay() {
 		
 		if(Input.GetMouseButtonDown(0)) {
 			intersect = Vector3(target.point.x, target.point.y, target.point.z);
+			intersect.y = findAt(intersect).y + 0.5;
 			Debug.Log(intersect);
 			inputC = intersect;
-			inputC.y = inputC.y + .5;
-			preCheck = true;
 			clickCheck = true;
 		}
 	}
 }
 
 /*
-	This function takes a Vector3 position and a List of probabilities, and then
-	generates a random float from 0.0 to 1.0 to decide in what vicinity the crate
-	will drop
+	Probability Calculation:
+	- Takes a vector position and list of probabilities (and sorts them)
+	- Generates a probability roll and selects the drop region based on the probabilities given
+	- Flips a coin to choose which side of the beacon the crate will drop on
+	- Finds the appropriate y-coordinate below the crate so it doesn't sink into the world
 */
 function calculateArea(center : Vector3, probability : List.<float>) : Vector3 {	
 	probability.Sort();
@@ -190,6 +212,11 @@ function calculateArea(center : Vector3, probability : List.<float>) : Vector3 {
 	return position;
 }
 
+/*
+	Find Y-Coordinate:
+	- Shoots a ray from the air into the world where the crate will drop
+	- Finds the first collision point and then updates the vector position
+*/
 function findAt(position : Vector3) : Vector3 {
 	position.y += 1;
 	
