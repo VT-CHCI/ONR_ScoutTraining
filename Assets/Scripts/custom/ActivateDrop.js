@@ -6,8 +6,10 @@ import System.Collections.Generic;
 /*
 	Time:
 	- Used to calculate speed of descent of the crate
+	- Used as offset to Time.time for extra crate drops
 */
 var startTime : float;
+var timerOffset : float;
 
 /*
 	Strings & Vector3:
@@ -70,6 +72,8 @@ function Start () {
 	startTime = Time.time;
 	
 	random = new Random();
+	
+	mouseR.useWorldSpace = true;
 }
 
 /*
@@ -95,6 +99,7 @@ function Update () {
 	}
 	
 	else if(!clickCheck) {
+		resetTimer();
 		drawMouseRay();
 		
 		if(!rToggle) {
@@ -105,6 +110,8 @@ function Update () {
 	else if(buttonCheck || clickCheck) {
 		ReleaseCrate(rToggle, inputC, 10);
 	}
+	
+	drawLineRenderer();
 }
 
 /*
@@ -138,7 +145,7 @@ function ReleaseCrate (toggle : boolean, targetP : Vector3 , t : float) {
 	if(crate != null) {
 		crate.transform.position = Vector3(targetP.x - 30, targetP.y + 200, targetP.z);
 		crate.renderer.enabled = true;
-		delta = ((Time.time - startTime) / t);
+		delta = ((Time.time - startTime - timerOffset) / t);
 		
 		crate.transform.position = Vector3.Lerp(crate.transform.position, targetP, delta);
 	}
@@ -230,5 +237,28 @@ function findAt(position : Vector3) : Vector3 {
 	}
 }
 
+/*
+	Draw Mouse Laser:
+	- Shoots a ray from the mouse position to the direction the mouse is pointing
+	- Sets the appropriate positions of the LineRenderer to draw the correct laser
+*/
+function drawLineRenderer() {
+	var ray : Ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+	var target : RaycastHit;
+	
+	if(Physics.Raycast(ray, target, Mathf.Infinity)) {
+        mouseR.enabled = true;
+		mouseR.SetPosition(0, Vector3(-20, 0, -171));
+		mouseR.SetPosition(1, target.point + target.normal);
+	}
+}
 
+/*
+	Offset for Time.time:
+	- Function that is used to offset Time.time
+	- Used for the delta when dropping the crate
+*/
+function resetTimer() {
+	timerOffset = Time.time;
+}
 

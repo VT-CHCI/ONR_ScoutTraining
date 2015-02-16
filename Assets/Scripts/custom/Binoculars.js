@@ -1,6 +1,6 @@
 ﻿#pragma strict
 
-var ftCanvas : 
+//var ftCanvas : 
 
 function Start () {
 
