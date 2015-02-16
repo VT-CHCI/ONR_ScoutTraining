@@ -244,8 +244,8 @@ public class TrackingManager_v2 : MonoBehaviour
 	    	getData((now - (long)latency.x), pData);
 	      trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
 	      
-	      head.transform.localPosition = applyPosOffsets(trackingData.head.data);
-	      wand.transform.localPosition = applyPosOffsets(trackingData.wand.data);
+	      ZupToYup(head, trackingData.head.data, true);
+	      ZupToYup(wand, trackingData.wand.data);
 
 	      getData((now - (long)latency.y), pData);
 	      trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
@@ -260,7 +260,7 @@ public class TrackingManager_v2 : MonoBehaviour
 	  }
 	}
 
-	void ZupToYup (GameObject obj, float[] transforms, bool posOnly, bool applyPosOffsets = true)
+	void ZupToYup (GameObject obj, float[] transforms, bool posOnly = false, bool applyPosOffsets = true)
 	{
 		Vector3 t = new Vector3(transforms[0], transforms[1], transforms[2]);
 		Quaternion r = Quaternion.Euler(transforms[3], transforms[4], transforms[5]);
@@ -297,11 +297,6 @@ public class TrackingManager_v2 : MonoBehaviour
 		   m.GetColumn(2).magnitude
 		);
 	} 
-
-	Vector3 applyPosOffsets(float[] trackerData)
-	{
-		return new Vector3(caveCenterOffset.x + trackerData[0]*trackingScalingFactor, caveCenterOffset.y + trackerData[1]*trackingScalingFactor, caveCenterOffset.z + trackerData[2]*trackingScalingFactor);
-	}
 
 	//Creates latency sliders
 	Vector3 latencySlider (Rect screenRect, Vector3 latency) 
