@@ -153,9 +153,7 @@ public class TrackingManager_v2 : MonoBehaviour
 	private static extern void getData(long ms, IntPtr pSensorData);
 
 	private long now;
-	
 	private IntPtr pData;
-
 	private SensorData trackingData;
 
 	private Logger logger;
@@ -166,22 +164,23 @@ public class TrackingManager_v2 : MonoBehaviour
 	private SliderAndTextControl handSlider;
 	private SliderAndTextControl ARSlider;
 
+	private Vector3 caveCenterOffset;
+	private Vector3TextControl caveOffsetControls;
+
+	private float trackingScalingFactor;
+	private SliderAndTextControl trackingScalingSlider;
+
+	private float turnSensitivity;
+	private SliderAndTextControl turnSensitivitySlider;
+
+	private Matrix4x4 tMatrix;
+
 	public GameObject head;
 	public GameObject wand;
 	public GameObject ARDisplay;
 	public GameObject ARContainer;
 
-	public Vector3 caveCenterOffset;
-	private Vector3TextControl caveOffsetControls;
-
-	public float trackingScalingFactor;
-	private SliderAndTextControl trackingScalingSlider;
-
-	public float turnSensitivity;
-	private SliderAndTextControl turnSensitivitySlider;
-
 	public bool notCave;
-
 
 	// Use this for initialization
 	void Start () 
@@ -209,6 +208,12 @@ public class TrackingManager_v2 : MonoBehaviour
 
 		trackingScalingFactor = 2.5f;
 		trackingScalingSlider.sliderString = "2.5";
+
+		tMatrix = new Matrix4x4();
+		tMatrix.SetRow(0, new Vector4(1, 0, 0, 0));
+    tMatrix.SetRow(1, new Vector4(0, 0, 1, 0));
+    tMatrix.SetRow(2, new Vector4(0, 1, 0, 0));
+    tMatrix.SetRow(3, new Vector4(0, 0, 0, 1));
 	}
 
 	void OnGUI() 
@@ -254,6 +259,44 @@ public class TrackingManager_v2 : MonoBehaviour
 	    }
 	  }
 	}
+
+	void ZupToYup (GameObject obj, float[] transforms, bool posOnly, bool applyPosOffsets = true)
+	{
+		Vector3 t = new Vector3(transforms[0], transforms[1], transforms[2]);
+		Quaternion r = Quaternion.Euler(transforms[3], transforms[4], transforms[5]);
+		Vector3 s = new Vector3(1, 1, 1);
+
+		if (applyPosOffsets)
+		{
+			t = t*trackingScalingFactor + caveCenterOffset;
+		}
+
+		Matrix4x4 m = Matrix4x4.TRS(t, r, s);
+		m = tMatrix*m;
+
+		// Extract new local position
+		obj.transform.position = m.GetColumn(3);
+
+		// Extract new local rotation
+		if (posOnly)
+		{
+			obj.transform.eulerAngles = Vector3.zero;
+		}
+		else 
+		{
+			obj.transform.rotation = Quaternion.LookRotation(
+		  	m.GetColumn(2),
+		  	m.GetColumn(1)
+			);
+		}
+
+		// Extract new local scale
+		obj.transform.localScale = new Vector3 (
+		   m.GetColumn(0).magnitude,
+		   m.GetColumn(1).magnitude,
+		   m.GetColumn(2).magnitude
+		);
+	} 
 
 	Vector3 applyPosOffsets(float[] trackerData)
 	{
