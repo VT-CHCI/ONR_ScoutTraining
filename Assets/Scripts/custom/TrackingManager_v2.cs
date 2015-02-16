@@ -8,12 +8,12 @@ public class SliderAndTextControl
 {     
 	private float f;
 	private string s;
-	
+
 	public string sliderString = "0";
 
-	public float CreateControl (Rect screenRect, float sliderValue, float sliderMaxValue, string labelText) 
+	public float CreateControl (Rect screenRect, float sliderValue, float sliderMaxValue, string labelText, string units) 
 	{
-		GUI.Label (screenRect, labelText + ": " + sliderValue.ToString("0.0") + "ms");
+		GUI.Label (screenRect, labelText + ": " + sliderValue.ToString("0.0") + units);
 
 		// <- Moves the Slider under the label
 		screenRect.y += screenRect.height;
@@ -214,15 +214,15 @@ public class TrackingManager_v2 : MonoBehaviour
 	void OnGUI() 
 	{
 	 	GUI.BeginGroup(new Rect(10, 10, 270, 190));
-		GUI.Box(new Rect(0, 0, 270, 190), "Latency Controls");
-		latency = latencySlider (new Rect (10,30,200,30), latency);
+			GUI.Box(new Rect(0, 0, 270, 190), "Latency Controls");
+			latency = latencySlider (new Rect (10,30,200,30), latency);
 		GUI.EndGroup();
 
 		GUI.BeginGroup(new Rect(10, Screen.height - 210, 270, 200));
-		GUI.Box(new Rect(0, 0, 270, 200), "CAVE Calibration");
-		caveCenterOffset = caveOffsetControls.CreateControl (new Rect (10,30,270,30), caveCenterOffset, "CAVE Origin Offset");
-		trackingScalingFactor = trackingScalingSlider.CreateControl (new Rect (10,90,200,30), trackingScalingFactor, 5.0f, "Tracker Scaling");
-		turnSensitivity = turnSensitivitySlider.CreateControl (new Rect (10,140,200,30), turnSensitivity, 10.0f, "Turn Sensitivity");
+			GUI.Box(new Rect(0, 0, 270, 200), "CAVE Calibration");
+			caveCenterOffset = caveOffsetControls.CreateControl (new Rect (10,30,270,30), caveCenterOffset, "CAVE Origin Offset");
+			trackingScalingFactor = trackingScalingSlider.CreateControl (new Rect (10,90,200,30), trackingScalingFactor, 5.0f, "Tracker Scaling", "");
+			turnSensitivity = turnSensitivitySlider.CreateControl (new Rect (10,140,200,30), turnSensitivity, 10.0f, "Turn Sensitivity", "");
 		GUI.EndGroup();
 	}
 	
@@ -263,15 +263,15 @@ public class TrackingManager_v2 : MonoBehaviour
 	//Creates latency sliders
 	Vector3 latencySlider (Rect screenRect, Vector3 latency) 
 	{
-		latency.x = headSlider.CreateControl (screenRect, latency.x, 2000.0f, "Head Latency");
+		latency.x = headSlider.CreateControl (screenRect, latency.x, 2000.0f, "Head Latency", " ms");
 		
 		// <- Move the next control down a bit to avoid overlapping
 		screenRect.y += 50; 
-		latency.y = handSlider.CreateControl (screenRect, latency.y, 2000.0f, "Cam Latency");
+		latency.y = handSlider.CreateControl (screenRect, latency.y, 2000.0f, "Cam Latency", " ms");
 		
 		// <- Move the next control down a bit to avoid overlapping
 		screenRect.y += 50; 
-		latency.z = ARSlider.CreateControl (screenRect, latency.z, 2000.0f, "AR Obj Latency");
+		latency.z = ARSlider.CreateControl (screenRect, latency.z, 2000.0f, "AR Obj Latency", " ms");
 		
 		return latency;
 	} 
