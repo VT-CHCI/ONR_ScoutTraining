@@ -2,7 +2,9 @@ fileFormatVersion: 2
 guid: c49f5be0ab1935c47a9a41587a518405
 MonoImporter:
   serializedVersion: 2
-  defaultReferences: []
+  defaultReferences:
+  - topSemi: {fileID: 2800000, guid: 6854a19eb39b1ed46b72261c96579c92, type: 3}
+  - botSemi: {fileID: 2800000, guid: 050e87cfab72b4b408a4aab37b272742, type: 3}
   executionOrder: 0
   icon: {instanceID: 0}
   userData: 
