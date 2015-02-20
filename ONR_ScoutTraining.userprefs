@@ -1,11 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets/Scripts/custom/TrackingManager_v2.cs">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\custom\ActivateDrop.js">
     <Files>
-      <File FileName="Assets/Scripts/custom/TrackingManager_v2.cs" Line="77" Column="77" />
-      <File FileName="Assets/Scripts/custom/Logger.cs" Line="13" Column="27" />
-      <File FileName="Assets/Scripts/custom/TrackingManager.cs" Line="65" Column="12" />
-      <File FileName="Assets/Scripts/custom/CaveSimulator.js" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\custom\ActivateDrop.js" Line="153" Column="2" />
+      <File FileName="Assets\Scripts\custom\VectorRead.js" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\custom\ClientManager.js" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\custom\Binoculars.js" Line="26" Column="27" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

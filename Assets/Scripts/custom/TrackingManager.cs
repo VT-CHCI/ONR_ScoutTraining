@@ -40,7 +40,7 @@ public class TrackingManager : MonoBehaviour {
 	
 	private IntPtr joystickTracker;
 	private float[] joystickTrackerData;
-	
+
 	private Logger debugger;
 	
 	public GameObject cave;
@@ -65,27 +65,27 @@ public class TrackingManager : MonoBehaviour {
 		headTracker = ReadDevice_Create ("head", 6, NOT_BUTTON);
 		
 		if (ReadDevice_valid(headTracker)) {
-			debugger.setText ("Connected to head");
+			//debugger.setText ("Connected to head");
 			removeMouseLook = true;
 		} else {
-			debugger.setText ("Connecting to head failed");
+			//debugger.setText ("Connecting to head failed");
 		}
 		
 		wandTracker = ReadDevice_Create ("wand", 6, NOT_BUTTON);
 		
 		if (ReadDevice_valid(wandTracker)) {
-			debugger.setText ("Connected to wand");
+			//debugger.setText ("Connected to wand");
 		} else {
-			debugger.setText ("Connecting to wand failed");
+			//debugger.setText ("Connecting to wand failed");
 		}
 		
 		joystickTracker = ReadDevice_Create("joystick", 2, NOT_BUTTON);
 		
 		if (ReadDevice_valid(joystickTracker)) {
-			debugger.setText ("Connected to joystick");
+			//debugger.setText ("Connected to joystick");
 			removeFPSInputController = true;
 		} else {
-			debugger.setText ("Connecting to joystick failed");
+			//debugger.setText ("Connecting to joystick failed");
 		}
 	}
 
