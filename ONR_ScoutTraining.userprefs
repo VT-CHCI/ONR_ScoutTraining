@@ -1,11 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\custom\Binoculars.js">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\custom\ActivateDrop.js">
     <Files>
-      <File FileName="Assets\Scripts\custom\ActivateDrop.js" Line="239" Column="1" />
+      <File FileName="Assets\Scripts\custom\ActivateDrop.js" Line="1" Column="1" />
       <File FileName="Assets\Scripts\custom\VectorRead.js" Line="1" Column="1" />
       <File FileName="Assets\Scripts\custom\ClientManager.js" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\custom\Binoculars.js" Line="3" Column="3" />
+      <File FileName="Assets\Scripts\custom\Binoculars.js" Line="26" Column="27" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

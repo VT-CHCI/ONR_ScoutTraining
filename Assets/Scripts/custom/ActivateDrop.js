@@ -38,10 +38,12 @@ var clickCheck = false;
 	World Objects:
 	- The crate that will be dropped
 	- The beacon that indicates where to drop the crate
+	- The "hand" object that is following the wand position
 	- The LineRenderer that will show the user where their mouse is in the world
 */
 var crate : GameObject;
 var beacon : GameObject;
+var hand : GameObject;
 var mouseR : LineRenderer;
 
 /*
@@ -67,6 +69,8 @@ function Start () {
 	crate = GameObject.Find("CrateD");
 	crate.renderer.enabled = false;
 	beacon = GameObject.Find("BeaconL");
+	
+	hand = GameObject.Find("MouseRay");
 	mouseR = GameObject.Find("MouseRay").GetComponent(LineRenderer);
 	
 	startTime = Time.time;
@@ -99,16 +103,17 @@ function Update () {
 	}
 	
 	else if(!clickCheck) {
-		resetTimer();
-		drawMouseRay();
-		
-		if(!rToggle) {
-			calculateArea(inputC, new List.<float>([.68, .95, .997]));
-		}
+//		resetTimer();
+//		drawMouseRay();
+//		
+//		if(!rToggle) {
+//			calculateArea(inputC, new List.<float>([.68, .95, .997]));
+//		}
 	}
 	
 	else if(buttonCheck || clickCheck) {
-		ReleaseCrate(rToggle, inputC, 10);
+		//onWandPress();
+		//ReleaseCrate(rToggle, inputC, 10);
 	}
 	
 	drawLineRenderer();
@@ -132,6 +137,21 @@ function OnGUI() {
 			}
 		}
 	}
+}
+
+/*
+	Wrapper Function:
+	- Allows the wand to call the ReleaseCrate function using a broadcasted message
+*/
+function onWandPress() {
+	resetTimer();
+	drawMouseRay();
+	
+	if(!rToggle) {
+		calculateArea(inputC, new List.<float>([.68, .95, .997]));
+	}
+	
+	ReleaseCrate(rToggle, inputC, 10);
 }
 
 /*
@@ -161,20 +181,19 @@ function ReleaseCrate (toggle : boolean, targetP : Vector3 , t : float) {
 */
 function drawMouseRay() {
 	//Personal Note: There might be no main camera, might be tagged as something else
-	var ray : Ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+	//var ray : Ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+	var ray : Ray = new Ray(hand.transform.position, hand.transform.forward);
 	var target : RaycastHit;
 	var intersect : Vector3;
 	
-	if(Physics.Raycast(ray, target, Mathf.Infinity)) {
-		mouseR.SetPosition(1, target.point);
-		
-		if(Input.GetMouseButtonDown(0)) {
+	if(Physics.Raycast(ray, target, Mathf.Infinity)) {		
+		//if(Input.GetMouseButtonDown(0)) {
 			intersect = Vector3(target.point.x, target.point.y, target.point.z);
 			intersect.y = findAt(intersect).y + 0.5;
 			Debug.Log(intersect);
 			inputC = intersect;
 			clickCheck = true;
-		}
+		//}
 	}
 }
 
@@ -239,16 +258,17 @@ function findAt(position : Vector3) : Vector3 {
 
 /*
 	Draw Mouse Laser:
-	- Shoots a ray from the mouse position to the direction the mouse is pointing
+	- Shoots a ray from the hand position to the forward direction
 	- Sets the appropriate positions of the LineRenderer to draw the correct laser
 */
 function drawLineRenderer() {
-	var ray : Ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+	//var ray : Ray = Camera.main.ScreenPointToRay(Input.mousePosition);
+	var ray : Ray = new Ray(hand.transform.position, hand.transform.forward);
 	var target : RaycastHit;
-	
+
 	if(Physics.Raycast(ray, target, Mathf.Infinity)) {
         mouseR.enabled = true;
-		mouseR.SetPosition(0, Vector3(-20, 0, -171));
+		mouseR.SetPosition(0, hand.transform.position);
 		mouseR.SetPosition(1, target.point + target.normal);
 	}
 }

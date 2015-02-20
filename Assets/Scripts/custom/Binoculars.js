@@ -28,6 +28,7 @@ function Start () {
 			case "Camera.FrontTop (UnityEngine.Camera)":
 				currentTexture = (cam as Camera).guiTexture;
 				currentTexture.texture = topSemi;
+				Debug.Log("Reached!");
 				break;
 			case "Camera.FrontBottom (UnityEngine.Camera)":
 				currentTexture = (cam as Camera).guiTexture;
@@ -41,6 +42,10 @@ function Start () {
 				}
 				
 				currentTexture.texture = blackScreen;
+		}
+		
+		if((cam as Camera).guiTexture == topSemi) {
+			Debug.Log("Texture Set!");
 		}
 	}
 }
