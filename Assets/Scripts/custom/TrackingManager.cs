@@ -41,7 +41,7 @@ public class TrackingManager : MonoBehaviour {
 	private IntPtr joystickTracker;
 	private float[] joystickTrackerData;
 	
-	private Debugger debugger;
+	private Logger debugger;
 	
 	public GameObject cave;
 	public Vector3 caveCenterOffset;
@@ -57,7 +57,7 @@ public class TrackingManager : MonoBehaviour {
 	
 	private CharacterMotor motor;
 	void Start () {
-		debugger = (Debugger) gameObject.GetComponent("Debugger");
+		debugger = (Logger) gameObject.GetComponent("Logger");
 		debugger.setText("Attempting to load trackers");
 		
 		motor = (CharacterMotor) gameObject.GetComponent(typeof(CharacterMotor));
@@ -162,7 +162,7 @@ public class TrackingManager : MonoBehaviour {
 			}
 			
 			// Apply the direction to the CharacterMotor
-			motor.inputMoveDirection = wand.transform.localRotation * directionVector;
+//			motor.inputMoveDirection = wand.transform.localRotation * directionVector;
 			
 			cave.transform.Rotate(0, joystickTrackerData[0] * turnSensitivity, 0);
 		}
