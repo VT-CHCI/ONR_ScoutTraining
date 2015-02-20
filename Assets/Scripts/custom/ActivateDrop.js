@@ -8,8 +8,8 @@ import System.Collections.Generic;
 	- Used to calculate speed of descent of the crate
 	- Used as offset to Time.time for extra crate drops
 */
-var startTime : float;
-var timerOffset : float;
+private var startTime : float;
+private var timerOffset : float;
 
 /*
 	Strings & Vector3:
@@ -17,10 +17,10 @@ var timerOffset : float;
 	  grabbed from TextFields
 	- Vector3 that contains the drop coordinates
 */
-var xInput : String; 
-var yInput : String;
-var zInput : String;
-var inputC : Vector3;
+private var xInput : String; 
+private var yInput : String;
+private var zInput : String;
+private var inputC : Vector3;
 
 /*
 	Booleans:
@@ -29,10 +29,10 @@ var inputC : Vector3;
 	- Whether or not user has clicked the UI button to drop the crate
 	- Whether or not the user has clicked the mouse to drop the crate
 */
-var rToggle = true;
-var fToggle = false;
-var buttonCheck = false;
-var clickCheck = false;
+private var rToggle = true;
+private var fToggle = false;
+private var buttonCheck = false;
+private var clickCheck = false;
 
 /*
 	World Objects:
@@ -44,13 +44,13 @@ var clickCheck = false;
 var crate : GameObject;
 var beacon : GameObject;
 var hand : GameObject;
-var mouseR : LineRenderer;
+private var mouseR : LineRenderer;
 
 /*
 	Delta Position:
 	- Manages the speed of the Lerp function that is "dropping" the crate
 */
-var delta = 0.0;
+private var delta = 0.0;
 
 /*
 	RNG:
@@ -66,18 +66,16 @@ var random : Random;
 	- Initializes random number generator for probability curve
 */
 function Start () {
-	crate = GameObject.Find("CrateD");
 	crate.renderer.enabled = false;
-	beacon = GameObject.Find("BeaconL");
-	
-	hand = GameObject.Find("MouseRay");
-	mouseR = GameObject.Find("MouseRay").GetComponent(LineRenderer);
+
+
+	mouseR = hand.GetComponent(LineRenderer);
 	
 	startTime = Time.time;
 	
 	random = new Random();
 	
-	mouseR.useWorldSpace = true;
+	// mouseR.useWorldSpace = true;
 }
 
 /*
@@ -116,7 +114,7 @@ function Update () {
 		//ReleaseCrate(rToggle, inputC, 10);
 	}
 	
-	drawLineRenderer();
+	// drawLineRenderer();
 }
 
 /*
@@ -182,7 +180,7 @@ function ReleaseCrate (toggle : boolean, targetP : Vector3 , t : float) {
 function drawMouseRay() {
 	//Personal Note: There might be no main camera, might be tagged as something else
 	//var ray : Ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-	var ray : Ray = new Ray(hand.transform.position, hand.transform.forward);
+	var ray : Ray = new Ray(hand.transform.localPosition, hand.transform.forward);
 	var target : RaycastHit;
 	var intersect : Vector3;
 	
@@ -263,14 +261,14 @@ function findAt(position : Vector3) : Vector3 {
 */
 function drawLineRenderer() {
 	//var ray : Ray = Camera.main.ScreenPointToRay(Input.mousePosition);
-	var ray : Ray = new Ray(hand.transform.position, hand.transform.forward);
+	var ray : Ray = new Ray(hand.transform.localPosition, hand.transform.forward);
 	var target : RaycastHit;
 
-	if(Physics.Raycast(ray, target, Mathf.Infinity)) {
+	// if(Physics.Raycast(ray, target, Mathf.Infinity)) {
         mouseR.enabled = true;
-		mouseR.SetPosition(0, hand.transform.position);
-		mouseR.SetPosition(1, target.point + target.normal);
-	}
+		mouseR.SetPosition(0, hand.transform.localPosition);
+		mouseR.SetPosition(1, hand.transform.GetChild(0).transform.localPosition);
+	// }
 }
 
 /*
