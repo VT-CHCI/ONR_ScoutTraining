@@ -180,8 +180,6 @@ public class TrackingManager_v2 : MonoBehaviour
 	public GameObject ARDisplay;
 	public GameObject ARContainer;
 
-	public bool notCave;
-
 	// Use this for initialization
 	void Start () 
 	{
@@ -190,7 +188,7 @@ public class TrackingManager_v2 : MonoBehaviour
 		logger = (Logger) gameObject.GetComponent("Logger");
 		logger.setText("Attempting to load trackers");
 
-		if (!notCave)
+		if (Application.platform == RuntimePlatform.LinuxPlayer)
 		{
 			init(false);
 			pData = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(SensorData)));
@@ -206,14 +204,15 @@ public class TrackingManager_v2 : MonoBehaviour
 		trackingScalingSlider = new SliderAndTextControl();
 		turnSensitivitySlider = new SliderAndTextControl();
 
-		trackingScalingFactor = 2.5f;
-		trackingScalingSlider.sliderString = "2.5";
+		//This assumes the world scale is in meters
+		trackingScalingFactor = 1.6f;
+		trackingScalingSlider.sliderString = "1.6";
 
 		tMatrix = new Matrix4x4();
 		tMatrix.SetRow(0, new Vector4(1, 0, 0, 0));
-    tMatrix.SetRow(1, new Vector4(0, 0, 1, 0));
-    tMatrix.SetRow(2, new Vector4(0, 1, 0, 0));
-    tMatrix.SetRow(3, new Vector4(0, 0, 0, 1));
+	    tMatrix.SetRow(1, new Vector4(0, 0, 1, 0));
+	    tMatrix.SetRow(2, new Vector4(0, 1, 0, 0));
+	    tMatrix.SetRow(3, new Vector4(0, 0, 0, 1));
 	}
 
 	void OnGUI() 
@@ -223,12 +222,22 @@ public class TrackingManager_v2 : MonoBehaviour
 			latency = latencySlider (new Rect (10,30,200,30), latency);
 		GUI.EndGroup();
 
-		GUI.BeginGroup(new Rect(10, Screen.height - 210, 270, 200));
-			GUI.Box(new Rect(0, 0, 270, 200), "CAVE Calibration");
+		GUI.BeginGroup(new Rect(10, Screen.height - 250, 270, 240));
+			GUI.Box(new Rect(0, 0, 270, 240), "CAVE Calibration");
 			caveCenterOffset = caveOffsetControls.CreateControl (new Rect (10,30,270,30), caveCenterOffset, "CAVE Origin Offset");
 			trackingScalingFactor = trackingScalingSlider.CreateControl (new Rect (10,90,200,30), trackingScalingFactor, 5.0f, "Tracker Scaling", "");
 			turnSensitivity = turnSensitivitySlider.CreateControl (new Rect (10,140,200,30), turnSensitivity, 10.0f, "Turn Sensitivity", "");
+			if (GUI.Button (new Rect (10,200,250,30), "Get Tracker Snapshot")) {
+				string headTransform = "head: " + head.transform.position.x.ToString("0.0") + ", " + head.transform.position.y.ToString("0.0") + ", " + head.transform.position.z.ToString("0.0");
+				string wandTransform = "wand: " + wand.transform.position.x.ToString("0.0") + ", " + wand.transform.position.y.ToString("0.0") + ", " + wand.transform.position.z.ToString("0.0");
+				
+				logger.setText(headTransform);
+				logger.setText(wandTransform);
+				logger.setText("-----------");
+			}
 		GUI.EndGroup();
+
+
 	}
 	
 	// Update is called once per frame
@@ -237,21 +246,21 @@ public class TrackingManager_v2 : MonoBehaviour
 		TimeSpan t = DateTime.UtcNow - new DateTime(1970, 1, 1);
 		now = (long)t.TotalMilliseconds;
 
-		if (!notCave)
+		if (Application.platform == RuntimePlatform.LinuxPlayer)
 		{
 			try
 	    {	
 	    	getData((now - (long)latency.x), pData);
-	      trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
+	      	trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
 	      
-	      ZupToYup(head, trackingData.head.data, true);
-	      ZupToYup(wand, trackingData.wand.data);
+	      	ZupToYup(head, trackingData.head.data, true);
+	      	ZupToYup(wand, trackingData.wand.data);
 
-	      getData((now - (long)latency.y), pData);
-	      trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
+	      	getData((now - (long)latency.y), pData);
+	      	trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
 	      
-	      getData((now - (long)latency.z), pData);
-	      trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
+	      	getData((now - (long)latency.z), pData);
+	      	trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
 	    }
 	    catch
 	    {
@@ -266,18 +275,23 @@ public class TrackingManager_v2 : MonoBehaviour
 		Quaternion r = Quaternion.Euler(transforms[3], transforms[4], transforms[5]);
 		Vector3 s = new Vector3(1, 1, 1);
 
-		if (applyPosOffsets)
-		{
-			t = t*trackingScalingFactor + caveCenterOffset;
-		}
+		t = t*trackingScalingFactor;
 
 		Matrix4x4 m = Matrix4x4.TRS(t, r, s);
 		m = tMatrix*m;
 
 		// Extract new local position
-		obj.transform.position = m.GetColumn(3);
+		if (applyPosOffsets)
+		{
+			obj.transform.localPosition = (Vector3)m.GetColumn(3) + caveCenterOffset;
+		}
+		else
+		{
+			obj.transform.localPosition = m.GetColumn(3);
+		}
+		
 
-		// Extract new local rotation
+		// Extract new global rotation
 		if (posOnly)
 		{
 			obj.transform.eulerAngles = Vector3.zero;
