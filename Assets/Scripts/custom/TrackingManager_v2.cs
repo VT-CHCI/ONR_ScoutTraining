@@ -291,24 +291,24 @@ public class TrackingManager_v2 : MonoBehaviour
 		}
 		
 
-		// Extract new global rotation
+		// Extract new local rotation
 		if (posOnly)
 		{
 			obj.transform.eulerAngles = Vector3.zero;
 		}
 		else 
 		{
-			obj.transform.rotation = Quaternion.LookRotation(
-		  	m.GetColumn(2),
-		  	m.GetColumn(1)
+			obj.transform.localRotation = Quaternion.LookRotation(
+			  	m.GetColumn(2),
+			  	m.GetColumn(1)
 			);
 		}
 
 		// Extract new local scale
 		obj.transform.localScale = new Vector3 (
-		   m.GetColumn(0).magnitude,
-		   m.GetColumn(1).magnitude,
-		   m.GetColumn(2).magnitude
+			m.GetColumn(0).magnitude,
+			m.GetColumn(1).magnitude,
+			m.GetColumn(2).magnitude
 		);
 	} 
 
