@@ -1,0 +1,14 @@
+<BeaconPositions>
+	<Trial>
+		<beacon
+			x = "0"
+			y = "0"
+			z = "0" >
+		</beacon>
+		<beacon 
+			x = "25"
+			y = "0"
+			z = "25" >
+		</beacon>
+	</Trial>
+</BeaconPositions>

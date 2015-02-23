@@ -1,20 +1,27 @@
 ﻿#pragma strict
 
-import System.Xml;
-import System.IO;
+private var asset : String;
+private var list : List.<Vector3> = new List.<Vector3>();
+private var destroyBeacons : boolean = false;
+public var beaconPrefab : GameObject;
 
-/*
-	Read XML-Positions:
-	- If the correct xml file exists, it is read into the asset String
-	- The reader var is used to navigate through the xml file
-	- If the tag contains the string "position", then add the (x, y, z) coordinates
-	  to the list of Vector3s.
-*/
 function Start () {
-	var asset : String;
-	var list : List.<Vector3>;
+	readXMLData();
+	
+	var newBeacon : GameObject;
+	for(position in list) {
+		newBeacon = Instantiate(beaconPrefab, position, Quaternion.identity);
+		newBeacon.GetComponent(Beacon).setColor(Color.blue);
+	}
+}
+
+function Update () {
+
+}
+
+function readXMLData() {
 	var tempV : Vector3;
-		
+	
 	//if (System.IO.File.Exists(Application.dataPath+"/Resources/config.xml")) {
 	  if(System.IO.File.Exists("Assets/XML/TrialData.xml")) {
 		asset = System.IO.File.ReadAllText("Assets/XML/TrialData.xml");
@@ -25,6 +32,7 @@ function Start () {
 		    	if(reader.Name.Contains("beacon")) {
 		    		if(float.TryParse(reader.GetAttribute("x"), tempV.x) && float.TryParse(reader.GetAttribute("y"), tempV.y) && float.TryParse(reader.GetAttribute("z"), tempV.z)) {
 		    			list.Add(tempV);
+		    			Debug.Log(tempV);
 		    		}
 		    	}
 		    }
