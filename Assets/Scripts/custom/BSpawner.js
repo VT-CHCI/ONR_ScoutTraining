@@ -8,15 +8,34 @@ public var beaconPrefab : GameObject;
 function Start () {
 	readXMLData();
 	
+	instantiateBeacons();
+}
+
+function Update () {
+	if(Input.GetKeyDown(KeyCode.B)) {
+		destroyBeacons = !destroyBeacons;
+		destroyAllBeacons();
+	}
+}
+
+function instantiateBeacons() {
 	var newBeacon : GameObject;
 	for(position in list) {
 		newBeacon = Instantiate(beaconPrefab, position, Quaternion.identity);
 		newBeacon.GetComponent(Beacon).setColor(Color.blue);
+		newBeacon.tag = "Beacon";
 	}
 }
 
-function Update () {
-
+function destroyAllBeacons() {
+	if(destroyBeacons) {
+		for(beacon in GameObject.FindGameObjectsWithTag("Beacon")) {
+			Destroy(beacon);
+		}
+	}
+	else {
+		instantiateBeacons();
+	}
 }
 
 function readXMLData() {
