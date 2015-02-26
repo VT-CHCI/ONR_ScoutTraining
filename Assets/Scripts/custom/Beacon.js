@@ -1,12 +1,17 @@
 ﻿#pragma strict
 
-//public var color : Color;
-
+/*
+	Start:
+	- Not needed at the moment
+*/
 function Start () {
-	//gameObject.GetComponent(Light).color = color;
-	//gameObject.GetComponent(LineRenderer).SetColors(color, color);
+
 }
 
+/*
+	Change Beacon Color:
+	- Takes a newColor and then changes the beacon and LineRenderer colors
+*/
 function setColor(newColor : Color) {
 	gameObject.GetComponent(Light).color = newColor;
 	gameObject.GetComponent(LineRenderer).SetColors(newColor, newColor);
