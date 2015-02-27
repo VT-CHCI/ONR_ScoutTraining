@@ -1,11 +1,11 @@
 ﻿<Properties>
   <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\custom\CSpawner.js">
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\custom\Crate.js">
     <Files>
       <File FileName="Assets\Scripts\custom\Beacon.js" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\custom\BSpawner.js" Line="55" Column="28" />
-      <File FileName="Assets\Scripts\custom\Crate.js" Line="12" Column="26" />
-      <File FileName="Assets\Scripts\custom\CSpawner.js" Line="94" Column="3" />
+      <File FileName="Assets\Scripts\custom\BSpawner.js" Line="55" Column="1" />
+      <File FileName="Assets\Scripts\custom\Crate.js" Line="117" Column="3" />
+      <File FileName="Assets\Scripts\custom\CSpawner.js" Line="49" Column="2" />
       <File FileName="Assets\Scripts\custom\ActivateDrop.js" Line="98" Column="42" />
     </Files>
   </MonoDevelop.Ide.Workbench>

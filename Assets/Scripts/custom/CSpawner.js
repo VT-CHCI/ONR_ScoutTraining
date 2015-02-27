@@ -36,7 +36,6 @@ function Update () {
 		if(testingDrop) {
 			spawnCrate(true);
 		}
-		dropCrates();
 	}
 }
 
