@@ -18,6 +18,9 @@ private var explode : boolean = false;
 */
 function Start () {
 	startTime = Time.time;
+	
+	positionV = calculateArea(new List.<float>(new List.<float>([.68, .95, .997])));
+	Debug.Log(positionV.x + " " + positionV.y +  " " + positionV.z);
 }
 
 /*
@@ -48,6 +51,7 @@ function setPAndTAndD(newPosition : Vector3, newTime : float, destroyImpact : bo
 */
 function dropCrate() {
 	transform.position = Vector3(positionV.x - 30, positionV.y + 200, positionV.z);
+	
 	var delta = ((Time.time - startTime) / time);
 	
 	transform.position = Vector3.Lerp(transform.position, positionV, delta);
@@ -66,7 +70,8 @@ function dropCrate() {
 	- Takes a list of probabilities and sudo-randomly finds the new position to drop the crate
 	- Used to account for concepts such as error, wind, etc
 */
-function calculateArea(probability : List.<float>) : Vector3 {	
+function calculateArea(probability : List.<float>) : Vector3 {
+	Debug.Log(positionV.x + " " + positionV.y +  " " + positionV.z);
 	probability.Sort();
 	
 	var roll : float = Random.value;
