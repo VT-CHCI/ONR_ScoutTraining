@@ -9,7 +9,15 @@ public class SliderAndTextControl
 	private float f;
 	private string s;
 
-	public string sliderString = "0";
+	public string sliderString;
+
+	public SliderAndTextControl () {
+		this.sliderString = "0";
+	}
+
+	public SliderAndTextControl (string sSlider) {
+		this.sliderString = sSlider;
+	}
 
 	public float CreateControl (Rect screenRect, float sliderValue, float sliderMaxValue, string labelText, string units) 
 	{
@@ -34,13 +42,13 @@ public class SliderAndTextControl
 
 		if (sliderString != s) 
 		{
-		  sliderString = s;
+		 	sliderString = s;
 		   
-		  if (float.TryParse(s, out f)) 
-		  {
-		    sliderString = s;
-		    sliderValue = f;
-		  }
+		  	if (float.TryParse(s, out f)) 
+		  	{
+		   		sliderString = s;
+		    	sliderValue = f;
+		  	}
 		}
 
 		return sliderValue;
@@ -53,9 +61,21 @@ public class Vector3TextControl
 	private float f;
 	private Rect screenRect2;
 
-	public string x = "0";
-	public string y = "0";
-	public string z = "0";
+	public string x, y, z;
+
+	public Vector3TextControl () 
+	{
+		this.x = "0";
+		this.y = "0";
+		this.z = "0";
+	}
+
+	public Vector3TextControl (string x, string y, string z) 
+	{
+		this.x = x;
+		this.y = y;
+		this.z = z;
+	}
 
 	public Vector3 CreateControl (Rect screenRect, Vector3 values, string labelText) 
 	{
@@ -90,19 +110,19 @@ public class Vector3TextControl
 		z = GUI.TextField(screenRect2, z);
 
 		if (float.TryParse(x, out f)) 
-	  {
-	    values.x = f;
-	  }
+	  	{
+	    	values.x = f;
+	  	}
 
 		if (float.TryParse(y, out f)) 
-	  {
-	    values.y = f;
-	  }
+	  	{
+	    	values.y = f;
+	  	}
 
 		if (float.TryParse(z, out f)) 
-	  {
-	    values.z = f;
-	  }
+	  	{
+	    	values.z = f;
+	  	}
 
 		return values;
 	}
@@ -154,10 +174,12 @@ public class TrackingManager_v2 : MonoBehaviour
 
 	private long now;
 	private IntPtr pData;
-	private SensorData trackingData;
+	private Matrix4x4 rotMatrix;
+	private Matrix4x4 flipMatrix;
 
-	private Logger logger;
-	private GameObject cave;
+	private SensorData trackingData;
+	private SensorData trackingDataCam;
+	private SensorData trackingDataAR;
 
 	private Vector3 latency;
 	private SliderAndTextControl headSlider;
@@ -173,12 +195,16 @@ public class TrackingManager_v2 : MonoBehaviour
 	private float turnSensitivity;
 	private SliderAndTextControl turnSensitivitySlider;
 
-	private Matrix4x4 tMatrix;
+	private Logger logger;
+	private GameObject cave;
+	private GameObject tempHead;
+	private GameObject ARMaster;
 
 	public GameObject head;
 	public GameObject wand;
 	public GameObject ARDisplay;
 	public GameObject ARContainer;
+
 
 	// Use this for initialization
 	void Start () 
@@ -186,33 +212,53 @@ public class TrackingManager_v2 : MonoBehaviour
 		cave = GameObject.Find("CAVE Mono");
 
 		logger = (Logger) gameObject.GetComponent("Logger");
-		logger.setText("Attempting to load trackers");
+		logger.setText("Attempting to load tracker plugin");
 
+		//Our plugin only exists for a linux machine
 		if (Application.platform == RuntimePlatform.LinuxPlayer)
 		{
 			init(false);
 			pData = Marshal.AllocHGlobal(Marshal.SizeOf(typeof(SensorData)));
 		
-			logger.setText("Trackers initialized");
+			logger.setText("Tracker plugin initialized");
 		}
 
 		headSlider = new SliderAndTextControl();
 		handSlider = new SliderAndTextControl();
 		ARSlider = new SliderAndTextControl();
 
-		caveOffsetControls = new Vector3TextControl();
-		trackingScalingSlider = new SliderAndTextControl();
+		//The cave origin is x = 0, y = 1.5m, z = 0
+		caveCenterOffset.y = 1.5f;
+		caveOffsetControls = new Vector3TextControl("0", "1.5", "0");
+
+		//World scale is in meters
+		trackingScalingFactor = 1.6f;
+		trackingScalingSlider = new SliderAndTextControl("1.6");
+		
 		turnSensitivitySlider = new SliderAndTextControl();
 
-		//This assumes the world scale is in meters
-		trackingScalingFactor = 1.6f;
-		trackingScalingSlider.sliderString = "1.6";
+		//Conversion Matrix for tracker Z-up configuration to Unity Y-up
+		rotMatrix = new Matrix4x4();
+		rotMatrix.SetRow(0, new Vector4(1, 0,  0, 0));
+	    rotMatrix.SetRow(1, new Vector4(0, 0, -1, 0));
+	    rotMatrix.SetRow(2, new Vector4(0, 1,  0, 0));
+	    rotMatrix.SetRow(3, new Vector4(0, 0,  0, 1));
 
-		tMatrix = new Matrix4x4();
-		tMatrix.SetRow(0, new Vector4(1, 0, 0, 0));
-	    tMatrix.SetRow(1, new Vector4(0, 0, 1, 0));
-	    tMatrix.SetRow(2, new Vector4(0, 1, 0, 0));
-	    tMatrix.SetRow(3, new Vector4(0, 0, 0, 1));
+	    flipMatrix = new Matrix4x4();
+		flipMatrix.SetRow(0, new Vector4(1, 0,  0, 0));
+	    flipMatrix.SetRow(1, new Vector4(0, 1,  0, 0));
+	    flipMatrix.SetRow(2, new Vector4(0, 0, -1, 0));
+	    flipMatrix.SetRow(3, new Vector4(0, 0,  0, 1));
+
+	    //Master position of all AR objects in the real world
+	    ARMaster = (GameObject) Instantiate(ARContainer);
+	    ARMaster.renderer.material = new Material (Shader.Find("Transparent/Diffuse"));
+	    ARMaster.renderer.material.mainTexture = null;
+		ARMaster.renderer.material.color = new Color(0.0F, 1.0F, 0.0F, 0.5F);
+
+	    //Head for calculating AR transforms
+	    tempHead = (GameObject) Instantiate(head);
+	    tempHead.transform.SetParent(cave.transform, true);
 	}
 
 	void OnGUI() 
@@ -228,16 +274,16 @@ public class TrackingManager_v2 : MonoBehaviour
 			trackingScalingFactor = trackingScalingSlider.CreateControl (new Rect (10,90,200,30), trackingScalingFactor, 5.0f, "Tracker Scaling", "");
 			turnSensitivity = turnSensitivitySlider.CreateControl (new Rect (10,140,200,30), turnSensitivity, 10.0f, "Turn Sensitivity", "");
 			if (GUI.Button (new Rect (10,200,250,30), "Get Tracker Snapshot")) {
-				string headTransform = "head: " + head.transform.position.x.ToString("0.0") + ", " + head.transform.position.y.ToString("0.0") + ", " + head.transform.position.z.ToString("0.0");
-				string wandTransform = "wand: " + wand.transform.position.x.ToString("0.0") + ", " + wand.transform.position.y.ToString("0.0") + ", " + wand.transform.position.z.ToString("0.0");
+				string headTransform = "head: " + transformToString(head.transform);
+				string wandTransform = "wand: " + transformToString(wand.transform);
+				string ARContainerTransform = "ar: " + transformToString(ARContainer.transform);
 				
-				logger.setText(headTransform);
-				logger.setText(wandTransform);
 				logger.setText("-----------");
+				logger.setText(wandTransform);
+				logger.setText(headTransform);
+				logger.setText(ARContainerTransform);
 			}
 		GUI.EndGroup();
-
-
 	}
 	
 	// Update is called once per frame
@@ -249,47 +295,59 @@ public class TrackingManager_v2 : MonoBehaviour
 		if (Application.platform == RuntimePlatform.LinuxPlayer)
 		{
 			try
-	    {	
-	    	getData((now - (long)latency.x), pData);
-	      	trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
-	      
-	      	ZupToYup(head, trackingData.head.data, true);
-	      	ZupToYup(wand, trackingData.wand.data);
+		    {	
+		    	getData((now - (long)latency.x), pData);
+		      	trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
+		      
+		      	ZupToYup(head, trackingData.head.data, true);
+		      	ZupToYup(wand, trackingData.wand.data);
 
-	      	getData((now - (long)latency.y), pData);
-	      	trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
-	      
-	      	getData((now - (long)latency.z), pData);
-	      	trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
-	    }
-	    catch
-	    {
-	       logger.setText("Error with getting tracker data!");
-	    }
-	  }
+		      	getData((now - (long)latency.y), pData);
+		      	trackingDataCam = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
+		      
+		      	getData((now - (long)latency.z), pData);
+		      	trackingDataAR = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
+
+		      	ZupToYup(tempHead, trackingDataAR.head.data, true);
+		      	pastARTransform(ARContainer, head, tempHead);
+		    }
+		    catch
+		    {
+		       logger.setText("Error with getting tracker data!");
+		    }
+	  	}
+	}
+
+	void pastARTransform (GameObject arObj, GameObject parentNow, GameObject parentThen) {
+		GameObject tempObj = (GameObject) Instantiate(ARMaster);
+		tempObj.transform.SetParent(parentThen.transform, true);
+
+		arObj.transform.SetParent(parentNow.transform, true);
+		arObj.transform.localPosition = tempObj.transform.localPosition;
+		arObj.transform.localRotation = tempObj.transform.localRotation;
+		arObj.transform.SetParent(null, true);
+
+		Destroy(tempObj);
 	}
 
 	void ZupToYup (GameObject obj, float[] transforms, bool posOnly = false, bool applyPosOffsets = true)
 	{
-		Vector3 t = new Vector3(transforms[0], transforms[1], transforms[2]);
+		Vector3 t = new Vector3(transforms[0], transforms[1], -transforms[2]);
 		Quaternion r = Quaternion.Euler(transforms[3], transforms[4], transforms[5]);
 		Vector3 s = new Vector3(1, 1, 1);
 
-		t = t*trackingScalingFactor;
-
 		Matrix4x4 m = Matrix4x4.TRS(t, r, s);
-		m = tMatrix*m;
+		m = flipMatrix*rotMatrix*m;
 
 		// Extract new local position
 		if (applyPosOffsets)
 		{
-			obj.transform.localPosition = (Vector3)m.GetColumn(3) + caveCenterOffset;
+			obj.transform.localPosition = (Vector3)m.GetColumn(3)*trackingScalingFactor + caveCenterOffset;
 		}
 		else
 		{
-			obj.transform.localPosition = m.GetColumn(3);
+			obj.transform.localPosition = (Vector3)m.GetColumn(3)*trackingScalingFactor;
 		}
-		
 
 		// Extract new local rotation
 		if (posOnly)
@@ -327,4 +385,10 @@ public class TrackingManager_v2 : MonoBehaviour
 		
 		return latency;
 	} 
+
+	string transformToString (Transform component){
+		return component.transform.position.x.ToString("0.0") + ", " + component.transform.position.y.ToString("0.0")
+			 + ", " + component.transform.position.z.ToString("0.0") + "| " + component.transform.localEulerAngles.x.ToString("0.0")
+			 + ", " + component.transform.localEulerAngles.y.ToString("0.0") + ", " + component.transform.localEulerAngles.z.ToString("0.0");
+	}
 }
