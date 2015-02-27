@@ -5,24 +5,19 @@
 	- Position Vector3 where the crate will spawn above
 	- The time it will take the crate to reach its position
 	- The start time of this script, used to calculate each delta change in time
-	- Boolean deciding when to drop the crate
 	- Boolean deciding whether or not the crate will be destroyed on impact
 */
 private var positionV : Vector3;
 private var time : float;
 private var startTime : float;
-private var startDrop : boolean = false;
 private var explode : boolean = false;
 
 /*
 	Start:
-	- Make the crate invisible, set the initial time, and don't drop the crate
-	- 
+	- Set the initial time
 */
 function Start () {
-	renderer.enabled = false;
 	startTime = Time.time;
-	startDrop = false;
 }
 
 /*
@@ -30,17 +25,7 @@ function Start () {
 	- If startDrop is true, then drop the crate
 */
 function Update () {
-	if(startDrop) {
-		dropCrate();
-	}
-}
-
-/*
-	Signal:
-	- Function used by CSpawner to tell the crate when to drop
-*/
-function signalDrop(start : boolean) {
-	startDrop = start;
+	dropCrate();
 }
 
 /*
@@ -63,7 +48,6 @@ function setPAndTAndD(newPosition : Vector3, newTime : float, destroyImpact : bo
 */
 function dropCrate() {
 	transform.position = Vector3(positionV.x - 30, positionV.y + 200, positionV.z);
-	renderer.enabled = true;
 	var delta = ((Time.time - startTime) / time);
 	
 	transform.position = Vector3.Lerp(transform.position, positionV, delta);

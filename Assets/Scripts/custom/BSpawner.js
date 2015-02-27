@@ -64,7 +64,7 @@ function instantiateBeacons() {
 function destroyAllBeacons() {
 	for(beacon in GameObject.FindGameObjectsWithTag("Beacon")) {
 		if(Network.isServer) {
-		Network.Destroy(beacon);
+			Network.Destroy(beacon);
 		}
 	}
 }

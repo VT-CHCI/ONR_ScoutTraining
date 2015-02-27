@@ -3,11 +3,13 @@
 /*
 	Variables:
 	- Boolean to decide when to show the error message to user
+	- Boolean to drop the crates in testing form
 	- Crate Prefab that will be used to clone the other crates
 	- Hand object that will represent the wand
 	- Maximum distance to check for beacons around the wand's intersection point
 */
 private var showMessage : boolean = false;
+public var testingDrop : boolean = true;
 public var cratePrefab : GameObject;
 public var hand : GameObject;
 public var distance : float;
@@ -31,6 +33,9 @@ function Update () {
 	} */
 	
 	if(Input.GetKeyUp(KeyCode.Space)) {
+		if(testingDrop) {
+			spawnCrate(true);
+		}
 		dropCrates();
 	}
 }
@@ -41,16 +46,6 @@ function Update () {
 */
 function updateDistance(newDistance : float) {
 	distance = newDistance;
-}
-
-/*
-	Drop the Crates:
-	- Checks for all GameObjects with the tag "Crate" and signals them to start dropping
-*/
-function dropCrates() {
-	for(crate in GameObject.FindGameObjectsWithTag("Crate")) {
-		crate.GetComponent(Crate).signalDrop(true);
-	}
 }
 
 /*
@@ -81,6 +76,17 @@ function spawnCrate() {
 	}
 	
 	createCrate(cratePosition, 10, false);
+}
+
+function spawnCrate(flag : boolean) {
+	if(flag) {
+		var cratePosition : Vector3;
+			
+		for(beacon in GameObject.FindGameObjectsWithTag("Beacon")) {
+			cratePosition = beacon.transform.position;
+			createCrate(cratePosition, 10, false);
+		}
+	}
 }
 
 /*
