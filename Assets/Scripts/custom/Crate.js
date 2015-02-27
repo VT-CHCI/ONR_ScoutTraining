@@ -66,12 +66,13 @@ function dropCrate() {
 	renderer.enabled = true;
 	var delta = ((Time.time - startTime) / time);
 	
-	
 	transform.position = Vector3.Lerp(transform.position, positionV, delta);
 	
 	if(Mathf.Abs(Vector3.Distance(transform.position, positionV)) <= 0.2f) {
 		if(explode) {
-			Destroy(this);
+			if(Network.isServer) {
+				Destroy(this);
+			}
 		}
 	}
 }

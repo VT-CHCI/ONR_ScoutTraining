@@ -50,7 +50,7 @@ function Update () {
 function instantiateBeacons() {
 	var newBeacon : GameObject;
 	for(position in list) {
-		newBeacon = Instantiate(beaconPrefab, position, Quaternion.identity);
+		newBeacon = Network.Instantiate(beaconPrefab, position, Quaternion.identity, 0);
 		newBeacon.GetComponent(Beacon).setColor(Color.blue);
 		newBeacon.tag = "Beacon";
 	}
@@ -63,7 +63,9 @@ function instantiateBeacons() {
 */
 function destroyAllBeacons() {
 	for(beacon in GameObject.FindGameObjectsWithTag("Beacon")) {
-		Destroy(beacon);
+		if(Network.isServer) {
+		Network.Destroy(beacon);
+		}
 	}
 }
 
