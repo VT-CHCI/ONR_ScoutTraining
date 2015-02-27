@@ -1,13 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\custom\BSpawner.js">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\custom\CSpawner.js">
     <Files>
-      <File FileName="Assets\Scripts\custom\ActivateDrop.js" Line="153" Column="2" />
-      <File FileName="Assets\Scripts\custom\VectorRead.js" Line="1" Column="3" />
-      <File FileName="Assets\Scripts\custom\ClientManager.js" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\custom\Binoculars.js" Line="1" Column="1" />
-      <File FileName="Assets\Scripts\custom\Beacon.js" Line="10" Column="19" />
-      <File FileName="Assets\Scripts\custom\BSpawner.js" Line="20" Column="2" />
+      <File FileName="Assets\Scripts\custom\BSpawner.js" Line="53" Column="81" />
+      <File FileName="Assets\Scripts\custom\Crate.js" Line="74" Column="5" />
+      <File FileName="Assets\Scripts\custom\CSpawner.js" Line="93" Column="82" />
+      <File FileName="Assets\Scripts\custom\Beacon.js" Line="13" Column="72" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>
