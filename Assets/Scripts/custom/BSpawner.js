@@ -76,10 +76,16 @@ function destroyAllBeacons() {
 */
 function readXMLData() {
 	var tempV : Vector3;
+	var filePath : String;
 	
-	//if (System.IO.File.Exists(Application.dataPath+"/Resources/config.xml")) {
-	  if(System.IO.File.Exists("Assets/XML/TrialData.xml")) {
-		asset = System.IO.File.ReadAllText("Assets/XML/TrialData.xml");
+	if (Application.isEditor) {
+		filePath = "Assets/XML/TrialData.xml";
+	} else {
+		filePath = Application.dataPath+"/Resources/TrialData.xml";
+	}
+
+	if(System.IO.File.Exists(filePath)) {
+		asset = System.IO.File.ReadAllText(filePath);
 			
 		if(asset != null) {
 			var reader : XmlTextReader = new XmlTextReader(new StringReader(asset));

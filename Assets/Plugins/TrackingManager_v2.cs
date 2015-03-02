@@ -177,7 +177,8 @@ public class TrackingManager_v2 : MonoBehaviour
 	private Matrix4x4 rotMatrix;
 	private Matrix4x4 flipMatrix;
 
-	private SensorData trackingData;
+	private SensorData trackingDataNow;
+	private SensorData trackingDataRealWorld;
 	private SensorData trackingDataCam;
 	private SensorData trackingDataAR;
 
@@ -195,8 +196,11 @@ public class TrackingManager_v2 : MonoBehaviour
 	private float turnSensitivity;
 	private SliderAndTextControl turnSensitivitySlider;
 
+	private byte wandButtons;
+
 	private Logger logger;
 	private GameObject cave;
+	private GameObject tempNow;
 	private GameObject tempHead;
 	private GameObject ARMaster;
 
@@ -204,6 +208,7 @@ public class TrackingManager_v2 : MonoBehaviour
 	public GameObject wand;
 	public GameObject ARDisplay;
 	public GameObject ARContainer;
+
 
 
 	public delegate void ClickAction();
@@ -261,7 +266,10 @@ public class TrackingManager_v2 : MonoBehaviour
 		ARMaster.renderer.material.color = new Color(0.0F, 1.0F, 0.0F, 0.5F);
 
 	    //Head for calculating AR transforms
-	    tempHead = (GameObject) Instantiate(head);
+	    tempNow = new GameObject("Now");
+	    tempNow.transform.SetParent(cave.transform, true);
+
+	    tempHead = new GameObject("Temp Head");
 	    tempHead.transform.SetParent(cave.transform, true);
 	}
 
@@ -286,6 +294,8 @@ public class TrackingManager_v2 : MonoBehaviour
 				logger.setText(wandTransform);
 				logger.setText(headTransform);
 				logger.setText(ARContainerTransform);
+				logger.setText(wandButtons.ToString("D4"));
+				logger.setText(wandButtons.ToString("000000"));
 
 				if(OnClicked != null)
                 	OnClicked();
@@ -303,13 +313,17 @@ public class TrackingManager_v2 : MonoBehaviour
 		{
 			try
 		    {	
+		    	getData((now), pData);
+		      	trackingDataNow = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
+
+		      	ZupToYup(tempNow, trackingDataNow.head.data, true);
+		      	wandButtons = trackingDataNow.wand.buttons;
+
 		    	getData((now - (long)latency.x), pData);
-		      	trackingData = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
+		      	trackingDataRealWorld = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
 		      
-		      	ZupToYup(head, trackingData.head.data, true);
-		      	ZupToYup(wand, trackingData.wand.data);
-
-
+		      	ZupToYup(head, trackingDataRealWorld.head.data, true);
+		      	ZupToYup(wand, trackingDataRealWorld.wand.data);
 
 		      	getData((now - (long)latency.y), pData);
 		      	trackingDataCam = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
@@ -318,7 +332,7 @@ public class TrackingManager_v2 : MonoBehaviour
 		      	trackingDataAR = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
 
 		      	ZupToYup(tempHead, trackingDataAR.head.data, true);
-		      	pastARTransform(ARContainer, head, tempHead);
+		      	pastARTransform(ARContainer, tempNow, tempHead);
 		    }
 		    catch
 		    {
@@ -329,9 +343,9 @@ public class TrackingManager_v2 : MonoBehaviour
 
 	void pastARTransform (GameObject arObj, GameObject parentNow, GameObject parentThen) {
 		GameObject tempObj = (GameObject) Instantiate(ARMaster);
-		tempObj.transform.SetParent(parentThen.transform, true);
+		tempObj.transform.SetParent(parentNow.transform, true);
 
-		arObj.transform.SetParent(parentNow.transform, true);
+		arObj.transform.SetParent(parentThen.transform, true);
 		arObj.transform.localPosition = tempObj.transform.localPosition;
 		arObj.transform.localRotation = tempObj.transform.localRotation;
 		arObj.transform.SetParent(null, true);
@@ -346,7 +360,7 @@ public class TrackingManager_v2 : MonoBehaviour
 		Vector3 s = new Vector3(1, 1, 1);
 
 		Matrix4x4 m = Matrix4x4.TRS(t, r, s);
-		m = flipMatrix*rotMatrix*m;
+		m = rotMatrix*m*flipMatrix;
 
 		// Extract new local position
 		if (applyPosOffsets)
@@ -382,11 +396,11 @@ public class TrackingManager_v2 : MonoBehaviour
 	//Creates latency sliders
 	Vector3 latencySlider (Rect screenRect, Vector3 latency) 
 	{
-		latency.x = headSlider.CreateControl (screenRect, latency.x, 2000.0f, "Head Latency", " ms");
+		latency.x = headSlider.CreateControl (screenRect, latency.x, 2000.0f, "Real World Latency", " ms");
 		
 		// <- Move the next control down a bit to avoid overlapping
 		screenRect.y += 50; 
-		latency.y = handSlider.CreateControl (screenRect, latency.y, 2000.0f, "Cam Latency", " ms");
+		latency.y = handSlider.CreateControl (screenRect, latency.y, 2000.0f, "Hand Cam Latency", " ms");
 		
 		// <- Move the next control down a bit to avoid overlapping
 		screenRect.y += 50; 
