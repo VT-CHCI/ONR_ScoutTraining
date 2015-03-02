@@ -29,7 +29,7 @@ function Start() {
 	//print (Application.dataPath);
 	
 	if (!AR) { 
-		var debugger:Debugger = gameObject.GetComponent("Debugger");
+		var debugger:Logger = gameObject.GetComponent("Logger");
 		debugger.setText(Application.dataPath);
 		
 		var asset:String;
