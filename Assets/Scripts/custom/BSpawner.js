@@ -50,7 +50,7 @@ function Update () {
 function instantiateBeacons() {
 	var newBeacon : GameObject;
 	for(position in list) {
-		newBeacon = Network.Instantiate(beaconPrefab, position, Quaternion.identity, 0);
+		newBeacon = Network.Instantiate(beaconPrefab, position, Quaternion.identity, 2);
 		newBeacon.GetComponent(Beacon).setColor(Color.blue);
 		newBeacon.tag = "Beacon";
 	}
