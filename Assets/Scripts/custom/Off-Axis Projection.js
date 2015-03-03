@@ -8,17 +8,37 @@
 #pragma strict
 @script ExecuteInEditMode()
  
+private var useMain : boolean = false;
 private var defaultObject : GameObject;
+private var projectionScreen : GameObject;
 
-public var projectionScreen : GameObject;
+public var mainProjectionScreen : GameObject;
+public var altProjectionScreen : GameObject;
 public var estimateViewFrustum : boolean = true;
+
+function OnEnable() {
+   if (altProjectionScreen != null) {
+      WandEventManager.OnButton1 += swapProjection;
+   }
+}
 
 function Start() {
    defaultObject = GameObject.Find("Wall."+gameObject.name.Split('.'[0])[1]);
 
-   if (projectionScreen == null) {
+   if (mainProjectionScreen == null) {
+      mainProjectionScreen = defaultObject;
       projectionScreen = defaultObject;
    }
+}
+
+function swapProjection() {
+   if (useMain) {
+      projectionScreen = mainProjectionScreen;
+   } else {
+      projectionScreen = altProjectionScreen;
+   }
+
+   useMain = !useMain;
 }
  
 function LateUpdate() {

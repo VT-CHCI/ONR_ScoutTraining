@@ -14,6 +14,11 @@ public var cratePrefab : GameObject;
 public var hand : GameObject;
 public var distance : float;
 
+function OnEnable()
+{
+    WandEventManager.OnTrigger += spawnAllCrates;
+}
+
 /*
 	Start:
 	- Not needed at the moment
@@ -34,7 +39,9 @@ function Update () {
 	
 	if(Input.GetKeyUp(KeyCode.Space)) {
 		if(testingDrop) {
-			spawnCrate(true);
+			spawnAllCrates();
+		} else {
+			spawnCrate();
 		}
 	}
 }
@@ -77,14 +84,12 @@ function spawnCrate() {
 	createCrate(cratePosition, 10, false);
 }
 
-function spawnCrate(flag : boolean) {
-	if(flag) {
-		var cratePosition : Vector3;
-			
-		for(beacon in GameObject.FindGameObjectsWithTag("Beacon")) {
-			cratePosition = beacon.transform.position;
-			createCrate(cratePosition, 10, false);
-		}
+function spawnAllCrates() {
+	var cratePosition : Vector3;
+		
+	for(beacon in GameObject.FindGameObjectsWithTag("Beacon")) {
+		cratePosition = beacon.transform.position;
+		createCrate(cratePosition, 10, false);
 	}
 }
 

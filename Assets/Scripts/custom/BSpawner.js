@@ -20,7 +20,7 @@ public var beaconPrefab : GameObject;
 function Start () {
 	readXMLData();
 	
-	instantiateBeacons();
+	//instantiateBeacons();
 }
 
 /*
@@ -51,7 +51,7 @@ function instantiateBeacons() {
 	var newBeacon : GameObject;
 	for(position in list) {
 		newBeacon = Network.Instantiate(beaconPrefab, position, Quaternion.identity, 0);
-		newBeacon.GetComponent(Beacon).setColor(Color.blue);
+		newBeacon.GetComponent(Beacon).setColor(Color.red);
 		newBeacon.tag = "Beacon";
 	}
 }
@@ -93,10 +93,25 @@ function readXMLData() {
 		    	if(reader.Name.Contains("beacon")) {
 		    		if(float.TryParse(reader.GetAttribute("x"), tempV.x) && float.TryParse(reader.GetAttribute("y"), tempV.y) && float.TryParse(reader.GetAttribute("z"), tempV.z)) {
 		    			list.Add(tempV);
-		    			Debug.Log(tempV);
 		    		}
 		    	}
 		    }
 		}
 	}
+}
+
+/*
+	Parse Color:
+	- Takes a string and converts it to a color 
+	- Format is "1.0, 1.0, .35, 1.0" - spaces are important
+*/
+function ParseColor (col : String) : Color {
+	var strings = col.Split(", "[0] );
+	var output : Color;
+
+	for (var i = 0; i < 4; i++) {
+		output[i] = System.Single.Parse(strings[i]);
+	}
+
+	return output;
 }

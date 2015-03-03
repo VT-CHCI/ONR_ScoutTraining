@@ -128,6 +128,17 @@ public class Vector3TextControl
 	}
 }
 
+public class wandEvent : EventArgs
+{
+    public float[] Joystick { get; private set; }
+    public byte Buttons { get; private set; }
+
+    public wandEvent (float[] joystick , byte buttons )
+    {
+        Joystick = joystick ;
+        Buttons = buttons ;
+    }
+}
 
 public class TrackingManager_v2 : MonoBehaviour 
 {
@@ -208,12 +219,10 @@ public class TrackingManager_v2 : MonoBehaviour
 	public GameObject wand;
 	public GameObject ARDisplay;
 	public GameObject ARContainer;
+	public GameObject binocular;
 
-
-
-	public delegate void ClickAction();
-    public static event ClickAction OnClicked;
-
+	public delegate void wandData(wandEvent e);
+    public static event wandData OnWandUpdate;
 
 	// Use this for initialization
 	void Start () 
@@ -288,17 +297,10 @@ public class TrackingManager_v2 : MonoBehaviour
 			if (GUI.Button (new Rect (10,200,250,30), "Get Tracker Snapshot")) {
 				string headTransform = "head: " + transformToString(head.transform);
 				string wandTransform = "wand: " + transformToString(wand.transform);
-				string ARContainerTransform = "ar: " + transformToString(ARContainer.transform);
 				
 				logger.setText("-----------");
 				logger.setText(wandTransform);
 				logger.setText(headTransform);
-				logger.setText(ARContainerTransform);
-				logger.setText(wandButtons.ToString("D4"));
-				logger.setText(wandButtons.ToString("000000"));
-
-				if(OnClicked != null)
-                	OnClicked();
 			}
 		GUI.EndGroup();
 	}
@@ -317,13 +319,19 @@ public class TrackingManager_v2 : MonoBehaviour
 		      	trackingDataNow = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
 
 		      	ZupToYup(tempNow, trackingDataNow.head.data, true);
-		      	wandButtons = trackingDataNow.wand.buttons;
+
+		      	if(OnWandUpdate != null)
+		      	{
+		      		var eventArgs = new wandEvent(trackingDataNow.wand.joystick, trackingDataNow.wand.buttons);
+		      		OnWandUpdate(eventArgs);
+		      	}
 
 		    	getData((now - (long)latency.x), pData);
 		      	trackingDataRealWorld = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
 		      
 		      	ZupToYup(head, trackingDataRealWorld.head.data, true);
 		      	ZupToYup(wand, trackingDataRealWorld.wand.data);
+		      	ZupToYup(binocular, trackingDataRealWorld.head.data);
 
 		      	getData((now - (long)latency.y), pData);
 		      	trackingDataCam = (SensorData)Marshal.PtrToStructure(pData, typeof(SensorData));
@@ -379,10 +387,12 @@ public class TrackingManager_v2 : MonoBehaviour
 		}
 		else 
 		{
-			obj.transform.localRotation = Quaternion.LookRotation(
-			  	m.GetColumn(2),
-			  	m.GetColumn(1)
-			);
+			//obj.transform.localRotation = Quaternion.LookRotation(
+			//  	m.GetColumn(2),
+			//  	m.GetColumn(1)
+			//);
+
+			obj.transform.rotation = Quaternion.Euler(-transforms[4], -transforms[3], -transforms[5]);
 		}
 
 		// Extract new local scale

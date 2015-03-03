@@ -23,13 +23,8 @@ function setCamera (position: String) {
 }
 
 function Start() {
-	//var asset:TextAsset = Resources.Load("config");
-	
-	
-	//print (Application.dataPath);
-	
 	if (!AR) { 
-		var debugger:Logger = gameObject.GetComponent("Logger");
+		var debugger:Logger = gameObject.GetComponent(Logger);
 		debugger.setText(Application.dataPath);
 		
 		var asset:String;
