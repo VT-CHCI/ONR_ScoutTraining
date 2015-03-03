@@ -100,7 +100,7 @@ function spawnAllCrates() {
 	- Tags the object with "Crate" to search for it later
 */
 function createCrate(position : Vector3, time : float, destroy : boolean) {
-	var newCrate = Network.Instantiate(cratePrefab, position, Quaternion.identity, 0);
+	var newCrate = Network.Instantiate(cratePrefab, position, Quaternion.identity, 2);
 	newCrate.GetComponent(Crate).setPAndTAndD(position, time, destroy);
 	newCrate.tag = "Crate";
 }
