@@ -12,22 +12,31 @@ import System.IO;
 */
 function Start () {
 	var asset : String;
-	var list : List.<Vector3>;
-	var tempV : Vector3;
 		
-	//if (System.IO.File.Exists(Application.dataPath+"/Resources/config.xml")) {
-	  if(System.IO.File.Exists("Assets/XML/TrialData.xml")) {
-		asset = System.IO.File.ReadAllText("Assets/XML/TrialData.xml");
+	if (System.IO.File.Exists(Application.dataPath+"/Resources/TrialData.xml") || 
+		System.IO.File.Exists(Application.dataPath+"/Assets/XML/TrialData.xml")) {
+		asset = System.IO.File.ReadAllText(Application.dataPath+"/Resources/TrialData.xml");
 			
 		if(asset != null) {
-			var reader : XmlTextReader = new XmlTextReader(new StringReader(asset));
-		    while(reader.Read()) {
-		    	if(reader.Name.Contains("beacon")) {
-		    		if(float.TryParse(reader.GetAttribute("x"), tempV.x) && float.TryParse(reader.GetAttribute("y"), tempV.y) && float.TryParse(reader.GetAttribute("z"), tempV.z)) {
-		    			list.Add(tempV);
-		    		}
-		    	}
-		    }
+			readXML(asset);
+		}
+		else {
+			asset = System.IO.File.ReadAllText(Application.dataPath+"/Assets/XML/TrialData.xml");
+			readXML(asset);
+		}	
+	}
+}
+
+function readXML(asset : String) {
+	var list : List.<Vector3>;
+	var tempV : Vector3;
+	
+	var reader : XmlTextReader = new XmlTextReader(new StringReader(asset));
+	while(reader.Read()) {
+	if(reader.Name.Contains("beacon")) {
+		if(float.TryParse(reader.GetAttribute("x"), tempV.x) && float.TryParse(reader.GetAttribute("y"), tempV.y) && float.TryParse(reader.GetAttribute("z"), tempV.z)) {
+			list.Add(tempV);
+			}
 		}
 	}
 }

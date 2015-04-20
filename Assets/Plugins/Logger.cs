@@ -19,7 +19,7 @@ public class Logger : MonoBehaviour {
 
 	void OnGUI () {
 		if (show) {
-			scrollPosition = GUI.BeginScrollView (new Rect(Screen.width - 410, 10, 400, 130), scrollPosition, scrollRect);			
+			scrollPosition = GUI.BeginScrollView (new Rect(Screen.width - 410, 10, 400, Screen.height - 10), scrollPosition, scrollRect);			
 			GUI.Label (labelRect, text);
 			GUI.EndScrollView ();
 		}

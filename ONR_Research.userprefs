@@ -1,0 +1,20 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\custom\NetworkManagerScript.js">
+    <Files>
+      <File FileName="Assets\Scripts\custom\BSpawner.js" Line="59" Column="2" />
+      <File FileName="Assets\Scripts\custom\ClientManager.js" Line="30" Column="20" />
+      <File FileName="Assets\Scripts\custom\NetworkManagerScript.js" Line="71" Column="1" />
+      <File FileName="Assets\Scripts\custom\ServerManager.js" Line="59" Column="7" />
+      <File FileName="Assets\Scripts\custom\Beacon.js" Line="23" Column="2" />
+      <File FileName="Assets\Plugins\Logger.cs" Line="33" Column="2" />
+      <File FileName="Assets\Plugins\TrackingManager_v2.cs" Line="290" Column="6" />
+      <File FileName="Assets\Scripts\custom\Crate.js" Line="51" Column="17" />
+      <File FileName="Assets\Scripts\custom\CSpawner.js" Line="1" Column="1" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+</Properties>

@@ -32,11 +32,7 @@ function Start () {
 	- Checks for the wand's trigger to spawn a new crate
 	- Drops all of the crates in the world when the user hits Spacebar
 */
-function Update () {
-	/* if(trigger detection) {
-		spawnCrate();
-	} */
-	
+function Update () {	
 	if(Input.GetKeyUp(KeyCode.Space)) {
 		if(testingDrop) {
 			spawnAllCrates();
@@ -100,9 +96,8 @@ function spawnAllCrates() {
 	- Tags the object with "Crate" to search for it later
 */
 function createCrate(position : Vector3, time : float, destroy : boolean) {
-	var newCrate = Network.Instantiate(cratePrefab, position, Quaternion.identity, 2);
-	newCrate.GetComponent(Crate).setPAndTAndD(position, time, destroy);
-	newCrate.tag = "Crate";
+	var newCrate : GameObject = Network.Instantiate(cratePrefab, position, Quaternion.identity, 0);
+	newCrate.GetComponent(Crate).networkView.RPC("setVariables", RPCMode.AllBuffered, position, time, destroy, "Crate");
 }
 
 /*

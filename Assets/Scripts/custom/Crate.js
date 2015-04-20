@@ -11,6 +11,7 @@ private var positionV : Vector3;
 private var time : float;
 private var startTime : float;
 private var explode : boolean = false;
+private var debugger : Logger;
 
 /*
 	Start:
@@ -21,6 +22,8 @@ function Start () {
 	
 	positionV = calculateArea(new List.<float>(new List.<float>([.68, .95, .997])));
 	Debug.Log(positionV.x + " " + positionV.y +  " " + positionV.z);
+	
+	debugger = gameObject.Find("CAVE Mono").GetComponent(Logger);
 }
 
 /*
@@ -36,10 +39,12 @@ function Update () {
 	- Set the position, time of descent, and explode variables
 	- Used by the CSpawner when creating new crates
 */
-function setPAndTAndD(newPosition : Vector3, newTime : float, destroyImpact : boolean) {
+@RPC
+function setVariables(newPosition : Vector3, newTime : float, destroyImpact : boolean, newTag : String) {
 	positionV = newPosition;
 	time = newTime;
 	explode = destroyImpact;
+	gameObject.tag = newTag;
 }
 
 /*
@@ -55,6 +60,10 @@ function dropCrate() {
 	var delta = ((Time.time - startTime) / time);
 	
 	transform.position = Vector3.Lerp(transform.position, positionV, delta);
+	
+	if(positionV.x < -15) {
+		debugger.setText("X: " + transform.position.x + " Y: " + transform.position.y + " Z: " + transform.position.z);
+	}
 	
 	if(Mathf.Abs(Vector3.Distance(transform.position, positionV)) <= 0.2f) {
 		if(explode) {

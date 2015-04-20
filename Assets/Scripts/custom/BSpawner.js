@@ -1,4 +1,5 @@
-﻿#pragma strict
+﻿
+#pragma strict
 
 /*
 	Class Variables:
@@ -9,7 +10,7 @@
 */
 private var asset : String;
 private var list : List.<Vector3> = new List.<Vector3>();
-private var destroyBeacons : boolean = false;
+private var destroyBeacons : boolean = true;
 public var beaconPrefab : GameObject;
 
 /*
@@ -23,6 +24,10 @@ function Start () {
 	//instantiateBeacons();
 }
 
+function OnEnable() {
+	WandEventManager.OnButton4 += toggleBeacons;
+}
+
 /*
 	Update (Every frame):
 	- Check to see if the 'B' button is pressed
@@ -30,29 +35,33 @@ function Start () {
 */
 function Update () {
 	if(Input.GetKeyDown(KeyCode.B)) {
-		destroyBeacons = !destroyBeacons;
-
-		if(destroyBeacons) {
-			destroyAllBeacons();
-		}
-		else {
-			instantiateBeacons();
-		}
-
+		toggleBeacons();
 	}
 }
 
+
+function toggleBeacons() {
+	destroyBeacons = !destroyBeacons;
+	
+	if(destroyBeacons) {
+		destroyAllBeacons();
+	}
+	else {
+		instantiateBeacons();
+	}
+}
 /*
 	Spawn Beacons:
 	- Traverses the list of beacon Vector3's and creates them from a prefab
-	- Sets the initial color to blue (will change later) and adds a tag for easy searching when destroying
+	- Sets the initial color to red (will change later) and adds a tag for easy searching when destroying
 */
 function instantiateBeacons() {
-	var newBeacon : GameObject;
+	var debugger:Logger = gameObject.Find("CAVE Mono").GetComponent(Logger);
 	for(position in list) {
-		newBeacon = Network.Instantiate(beaconPrefab, position, Quaternion.identity, 0);
-		newBeacon.GetComponent(Beacon).setColor(Color.red);
-		newBeacon.tag = "Beacon";
+		var newBeacon : GameObject = Network.Instantiate(beaconPrefab, position, Quaternion.identity, 1);
+		debugger.setText("Position: " + position + " Group ID: " + 1);
+		newBeacon.GetComponent(Beacon).networkView.RPC("setColorandTag", RPCMode.AllBuffered, "Beacon", "0.0, 1.0, 0.0, 1.0");
+		Network.RemoveRPCs(newBeacon.GetComponent(Beacon).networkView.viewID);
 	}
 }
 
@@ -98,20 +107,4 @@ function readXMLData() {
 		    }
 		}
 	}
-}
-
-/*
-	Parse Color:
-	- Takes a string and converts it to a color 
-	- Format is "1.0, 1.0, .35, 1.0" - spaces are important
-*/
-function ParseColor (col : String) : Color {
-	var strings = col.Split(", "[0] );
-	var output : Color;
-
-	for (var i = 0; i < 4; i++) {
-		output[i] = System.Single.Parse(strings[i]);
-	}
-
-	return output;
 }

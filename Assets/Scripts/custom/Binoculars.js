@@ -45,7 +45,8 @@ function Start () {
 		}
 		
 		if((cam as Camera).guiTexture == topSemi) {
-			Debug.Log("Texture Set!");
+			var debugger:Logger = gameObject.GetComponent(Logger);
+			debugger.setText("Texture Set!");
 		}
 	}
 }
