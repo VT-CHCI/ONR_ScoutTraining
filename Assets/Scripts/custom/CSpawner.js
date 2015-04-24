@@ -59,6 +59,7 @@ function updateDistance(newDistance : float) {
 function spawnCrate() {
 	var position = drawHandRay();
 	var cratePosition : Vector3;
+	var beaconPosition : Vector3;
 	var shortestDistance : float = Mathf.Infinity;
 	
 	for(beacon in GameObject.FindGameObjectsWithTag("Beacon")) {
@@ -67,7 +68,8 @@ function spawnCrate() {
 		if(newDistance <= distance) {
 			if(newDistance <= shortestDistance) {
 				shortestDistance = newDistance;
-				cratePosition = beacon.transform.position;
+				beaconPosition = beacon.transform.position;
+				cratePosition = Vector3(beacon.transform.position.x - 30, beacon.transform.position.y + 200, beacon.transform.position.z);
 			}
 		}
 	}
@@ -77,15 +79,15 @@ function spawnCrate() {
 		return;
 	}
 	
-	createCrate(cratePosition, 10, false);
+	createCrate(cratePosition, beaconPosition, 10, false);
 }
 
 function spawnAllCrates() {
 	var cratePosition : Vector3;
 		
 	for(beacon in GameObject.FindGameObjectsWithTag("Beacon")) {
-		cratePosition = beacon.transform.position;
-		createCrate(cratePosition, 10, false);
+		cratePosition = Vector3(beacon.transform.position.x - 30, beacon.transform.position.y + 100, beacon.transform.position.z);
+		createCrate(cratePosition, beacon.transform.position, 10, false);
 	}
 }
 
@@ -95,9 +97,9 @@ function spawnAllCrates() {
 	  and whether to destroy on impact or not
 	- Tags the object with "Crate" to search for it later
 */
-function createCrate(position : Vector3, time : float, destroy : boolean) {
-	var newCrate : GameObject = Network.Instantiate(cratePrefab, position, Quaternion.identity, 0);
-	newCrate.GetComponent(Crate).networkView.RPC("setVariables", RPCMode.AllBuffered, position, time, destroy, "Crate");
+function createCrate(cPosition : Vector3, bPosition : Vector3, time : float, destroy : boolean) {
+	var newCrate : GameObject = Network.Instantiate(cratePrefab, cPosition, Quaternion.identity, 0);
+	newCrate.GetComponent(Crate).networkView.RPC("setVariables", RPCMode.AllBuffered, bPosition, time, destroy, "Crate");
 }
 
 /*

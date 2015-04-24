@@ -8,6 +8,7 @@
 	- Boolean deciding whether or not the crate will be destroyed on impact
 */
 private var positionV : Vector3;
+private var deltaVector : Vector3;
 private var time : float;
 private var startTime : float;
 private var explode : boolean = false;
@@ -24,6 +25,8 @@ function Start () {
 	Debug.Log(positionV.x + " " + positionV.y +  " " + positionV.z);
 	
 	debugger = gameObject.Find("CAVE Mono").GetComponent(Logger);
+	
+	deltaVector = (positionV - transform.position);
 }
 
 /*
@@ -55,13 +58,17 @@ function setVariables(newPosition : Vector3, newTime : float, destroyImpact : bo
 	- When the crate reaches its end position, if explode is true, then destroy the crate
 */
 function dropCrate() {
-	transform.position = Vector3(positionV.x - 30, positionV.y + 200, positionV.z);
+	//transform.position = Vector3(positionV.x - 30, positionV.y + 200, positionV.z);
 	
 	var delta = ((Time.time - startTime) / time);
 	
-	transform.position = Vector3.Lerp(transform.position, positionV, delta);
+	//transform.position = Vector3.Lerp(transform.position, positionV, delta);
 	
-	if(positionV.x < -15) {
+	if(transform.position.x < positionV.x) {
+		transform.Translate(deltaVector * (Time.deltaTime / 10), Space.World);
+	}
+	
+	if(positionV.x < -15 && (Mathf.Abs(transform.position.x - positionV.x) > 1)) {
 		debugger.setText("X: " + transform.position.x + " Y: " + transform.position.y + " Z: " + transform.position.z);
 	}
 	
