@@ -1,15 +1,15 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" />
-  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\custom\CSpawner.js">
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Release" PreferredExecutionTarget="MonoDevelop.Default" />
+  <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\custom\BinocularMask.js">
     <Files>
-      <File FileName="Assets\Scripts\custom\Beacon.js" Line="14" Column="22" />
-      <File FileName="Assets\Scripts\custom\BSpawner.js" Line="66" Column="2" />
-      <File FileName="Assets\Scripts\custom\ClientManager.js" Line="83" Column="21" />
-      <File FileName="Assets\Scripts\custom\NetworkManagerScript.js" Line="21" Column="11" />
-      <File FileName="Assets\Scripts\custom\ServerManager.js" Line="14" Column="4" />
-      <File FileName="Assets\Scripts\custom\Crate.js" Line="46" Column="6" />
-      <File FileName="Assets\Scripts\custom\CSpawner.js" Line="99" Column="71" />
-      <File FileName="Assets\Scripts\custom\Builds.js" Line="6" Column="35" />
+      <File FileName="Assets\Scripts\custom\CSpawner.js" Line="89" Column="94" />
+      <File FileName="Assets\Scripts\custom\Beacon.js" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\custom\BSpawner.js" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\custom\Crate.js" Line="82" Column="6" />
+      <File FileName="Assets\Scripts\custom\Builds.js" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\custom\Binoculars.js" Line="1" Column="1" />
+      <File FileName="Assets\Scripts\custom\BinocularMask.js" Line="70" Column="4" />
+      <File FileName="Assets\Scripts\custom\BinocularLook.js" Line="9" Column="1" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

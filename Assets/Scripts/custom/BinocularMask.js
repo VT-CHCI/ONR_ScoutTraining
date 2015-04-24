@@ -45,7 +45,6 @@ function enableMask() {
 	
 	var parent = this.gameObject;
 	
-
 	parent.GetComponent(NetworkView).RPC("maskCameras", RPCMode.AllBuffered);
 }
 

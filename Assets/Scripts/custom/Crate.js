@@ -64,12 +64,23 @@ function dropCrate() {
 	
 	//transform.position = Vector3.Lerp(transform.position, positionV, delta);
 	
-	if(transform.position.x < positionV.x) {
-		transform.Translate(deltaVector * (Time.deltaTime / 10), Space.World);
-	}
+	// Using translate function
+//	if(transform.position.x < positionV.x) {
+//		transform.Translate(deltaVector * (Time.deltaTime / 10), Space.World);
+//	}
 	
-	if(positionV.x < -15 && (Mathf.Abs(transform.position.x - positionV.x) > 1)) {
-		debugger.setText("X: " + transform.position.x + " Y: " + transform.position.y + " Z: " + transform.position.z);
+	// Using Rigidbody AddForce function
+//	if(Mathf.Abs(transform.position.x - positionV.x) > .1) {
+//		GetComponent.<Rigidbody>().AddForce(deltaVector * (Time.deltaTime / 10));
+//	}
+	
+	// Using AddForce based off framerate
+	if(transform.position.y - positionV.y > 3) {
+		GetComponent.<Rigidbody>().AddForce(deltaVector * 1);
+		
+		if(positionV.x < -15) {
+			//debugger.setText("X: " + transform.position.x + " Y: " + transform.position.y + " Z: " + transform.position.z);
+		}
 	}
 	
 	if(Mathf.Abs(Vector3.Distance(transform.position, positionV)) <= 0.2f) {
