@@ -18,7 +18,7 @@ public var estimateViewFrustum : boolean = true;
 
 function OnEnable() {
    if (altProjectionScreen != null) {
-      WandEventManager.OnButton1 += swapProjection;
+      WandEventManager.OnButton1 += networkCallSwap;
    }
 }
 
@@ -31,6 +31,13 @@ function Start() {
    }
 }
 
+function networkCallSwap() {
+	if(networkView != null) {
+		networkView.RPC("swapProjection", RPCMode.AllBuffered);
+	}
+}
+
+@RPC
 function swapProjection() {
    if (useMain) {
       projectionScreen = mainProjectionScreen;
@@ -39,6 +46,9 @@ function swapProjection() {
    }
 
    useMain = !useMain;
+   
+   var debugger:Logger = gameObject.Find("CAVE Mono").GetComponent(Logger);
+   debugger.setText("Call Received!");
 }
  
 function LateUpdate() {

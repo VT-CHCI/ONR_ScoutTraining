@@ -19,6 +19,7 @@
      uvs[2]  = Vector2(0.0, 0.333);
      uvs[3]  = Vector2(0.333, 0.333);
      
+     
      // Top
      uvs[8]  = Vector2(0.334, 0.0);
      uvs[9]  = Vector2(0.666, 0.0);
