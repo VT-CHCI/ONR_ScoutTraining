@@ -46,9 +46,6 @@ function swapProjection() {
    }
 
    useMain = !useMain;
-   
-   var debugger:Logger = gameObject.Find("CAVE Mono").GetComponent(Logger);
-   debugger.setText("Call Received!");
 }
  
 function LateUpdate() {
