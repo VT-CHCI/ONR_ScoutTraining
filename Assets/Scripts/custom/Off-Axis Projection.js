@@ -41,6 +41,7 @@ function networkCallSwap() {
 function swapProjection() {
    if (useMain) {
       projectionScreen = mainProjectionScreen;
+      Debug.Log("Switched");
    } else {
       projectionScreen = altProjectionScreen;
    }

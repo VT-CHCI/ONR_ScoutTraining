@@ -1,8 +1,11 @@
 ﻿<Properties>
-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" PreferredExecutionTarget="MonoDevelop.Default" />
   <MonoDevelop.Ide.Workbench ActiveDocument="Assets\Scripts\custom\Off-Axis Projection.js">
     <Files>
-      <File FileName="Assets\Scripts\custom\Off-Axis Projection.js" Line="21" Column="52" />
+      <File FileName="Assets\Scripts\custom\Off-Axis Projection.js" Line="58" Column="28" />
+      <File FileName="Assets\Scripts\custom\BinocularLook.js" Line="16" Column="33" />
+      <File FileName="Assets\Plugins\TrackingManager_v2.cs" Line="332" Column="23" />
+      <File FileName="Assets\Scripts\custom\BSpawner.js" Line="37" Column="2" />
     </Files>
   </MonoDevelop.Ide.Workbench>
   <MonoDevelop.Ide.DebuggingService.Breakpoints>

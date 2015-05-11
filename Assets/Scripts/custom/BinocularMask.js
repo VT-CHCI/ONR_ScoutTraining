@@ -1,4 +1,8 @@
-﻿#pragma strict
+﻿/*
+	Old script, not used
+*/
+
+#pragma strict
 
 public var mask : Texture;
 

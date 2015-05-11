@@ -53,7 +53,7 @@ function toggleBeacons() {
 /*
 	Spawn Beacons:
 	- Traverses the list of beacon Vector3's and creates them from a prefab
-	- Sets the initial color to red (will change later) and adds a tag for easy searching when destroying
+	- Sets the initial color to green (will change later) and adds a tag for easy searching when destroying
 */
 function instantiateBeacons() {
 	var debugger:Logger = gameObject.Find("CAVE Mono").GetComponent(Logger);
@@ -61,7 +61,7 @@ function instantiateBeacons() {
 		var newBeacon : GameObject = Network.Instantiate(beaconPrefab, position, Quaternion.identity, 1);
 		debugger.setText("Position: " + position + " Group ID: " + 1);
 		newBeacon.GetComponent(Beacon).networkView.RPC("setColorandTag", RPCMode.AllBuffered, "Beacon", "0.0, 1.0, 0.0, 1.0");
-		Network.RemoveRPCs(newBeacon.GetComponent(Beacon).networkView.viewID);
+		//Network.RemoveRPCs(newBeacon.GetComponent(Beacon).networkView.viewID);
 	}
 }
 

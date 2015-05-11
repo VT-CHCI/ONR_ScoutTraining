@@ -1,3 +1,7 @@
+/*
+	Old script, unused
+*/
+
 #pragma strict
 
 import UnityEngine.UI;

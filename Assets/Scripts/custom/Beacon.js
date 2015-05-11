@@ -4,7 +4,7 @@ var debugger : Logger;
 
 /*
 	Start:
-	- Not needed at the moment
+	- Find the logger to print out messages on clients
 */
 function Start () {
 	debugger = gameObject.Find("CAVE Mono").GetComponent(Logger);
@@ -27,6 +27,7 @@ function setColorandTag(newTag : String, newColor : String) {
 	Parse Color:
 	- Takes a string and converts it to a color 
 	- Format is "1.0, 1.0, .35, 1.0" - spaces are important
+	- Expects in the form of 'R, G, B, A'
 */
 function ParseColor (col : String) : Color {
 	var strings = col.Split(", "[0] );
